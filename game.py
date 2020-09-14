@@ -44,6 +44,7 @@ while running:
 		location_x += 1
 	if pressed_keys[K_a]:
 		print ("a pressed")
+	pygame.event.pump()
 	draw.rectangle((location_x, 5, 2, 2), outline=0, fill="white")
 	disp.image(image)
 	disp.show()
