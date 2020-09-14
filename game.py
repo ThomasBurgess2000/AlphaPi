@@ -40,12 +40,13 @@ location_x = 0
 
 running = True
 while running:
+	draw.rectangle((0,0,width,height),outline=0,fill=0)
 	pressed_keys = pygame.key.get_pressed()
 	if pressed_keys[K_RIGHT]:
 		print ("right pressed")
 		location_x += 1
-	if pressed_keys[K_a]:
-		print ("a pressed")
+	if pressed_keys[K_ESCAPE]:
+		pygame.quit()
 	pygame.event.pump()
 	draw.rectangle((location_x, 5, 2, 2), outline=0, fill="white")
 	disp.image(image)
