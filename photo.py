@@ -27,7 +27,8 @@ bottom = height - padding
 x = 0
 
 draw.rectangle((0,0,width,height),outline=0,fill=0)
-image = PIL.Image.open(r'/home/pi/oled_bonnet/oled_bonnet/ninjinka.png')
+image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/ninjinka.png')
+image = image.convert('1')
 disp.image(image)
 disp.show()
 	
