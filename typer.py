@@ -8,7 +8,7 @@ import adafruit_ssd1305
 import keyboard
 import string
 import threading, time
-from msvcrt import getch
+import getch
 
 oled_reset = digitalio.DigitalInOut(D4)
 i2c = busio.I2C(SCL, SDA)
