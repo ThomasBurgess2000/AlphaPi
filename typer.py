@@ -55,7 +55,7 @@ string = ""
 key="lol"
 
 def thread1():
-    global keys
+    global key
     lock = threading.Lock()
     while True:
         with lock:
@@ -64,10 +64,7 @@ def thread1():
 threading.Thread(target = thread1).start()
 
 while True:
-    time.sleep(1)
     print(key)
-    draw.rectangle((0,0,width, height), outline = 0, fill=0)
-    draw.text((x,top+0), str(key),font=font, fill=255)
+    draw.text((x,top+0), str(key), font=font, fill=255)
     disp.image(image)
     disp.show()
-    time.sleep(1)
