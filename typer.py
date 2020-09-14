@@ -6,6 +6,9 @@ import digitalio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1305
 import keyboard
+import string
+import threading, time
+from msvcrt import getch
 
 oled_reset = digitalio.DigitalInOut(D4)
 i2c = busio.I2C(SCL, SDA)
@@ -50,8 +53,23 @@ string = ""
 #FUNCTIONS
 
 
+def thread1():
+    global keys
+    lock = threading.Lock()
+    while True:
+        with lock:
+            key = getch()
+
+threading.Thread(target = thread1).start()
 
 while True:
+    time.sleep(1)
+    draw.rectangle((0,0,width, height), outline = 0, fill=0)
+    draw.text((x,top+0), str(key),font=font, fill=255)
     disp.image(image)
     disp.show()
-    time.sleep(.1)
+    time.sleep(1)
+
+
+while True:
+    
