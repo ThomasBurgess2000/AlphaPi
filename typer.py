@@ -53,6 +53,7 @@ string = ""
 #FUNCTIONS
 
 key="lol"
+lastkey = "lol2"
 
 def thread1():
     global key
@@ -61,10 +62,14 @@ def thread1():
         with lock:
             key = getch.getch()
 
+def thread2():
+    while True:
+        draw.text((x,top+0), str(key), font=font, fill=255)
+        disp.image(image)
+        disp.show()
+
 threading.Thread(target = thread1).start()
+threading.Thread(target = thread2.start()
 
 while True:
     print(key)
-    draw.text((x,top+0), str(key), font=font, fill=255)
-    disp.image(image)
-    disp.show()
