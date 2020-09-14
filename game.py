@@ -11,6 +11,8 @@ import adafruit_ssd1305
 from pygame.locals import *
 
 pygame.init()
+os.environ['SDL_VIDEODRIVER'] = 'dummy'
+pygame.display.set_mode((1,1))
 
 oled_reset = digitalio.DigitalInOut(D4)
 i2c = busio.I2C(SCL,SDA)
