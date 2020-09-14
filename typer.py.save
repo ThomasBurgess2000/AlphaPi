@@ -5,7 +5,8 @@ import busio
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1305
-import keyboard
+#import keyboard
+from pynput import keyboard
 
 oled_reset = digitalio.DigitalInOut(D4)
 i2c = busio.I2C(SCL, SDA)
@@ -48,10 +49,27 @@ font = ImageFont.load_default()
 string = ""
 
 #FUNCTIONS
+def on_press(key):
+    try:
+        string = string + '{0}'.format(key.char)
+        draw.rectangle((0, 0, width, height), outline=0, fill=0)
+        draw.text((x, top+0), string, font=font, fill=255)
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
 
-
+def on_release(key):
+    print('{0} released'.format(
+        key))
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
 
 while True:
     disp.image(image)
     disp.show()
-    time.sleep(.1)
+    ti
+listener = keyboard.Listener(
+    on_press=on_press,
+    on_release=on_release)
+listener.start()
