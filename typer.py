@@ -15,7 +15,6 @@ i2c = busio.I2C(SCL, SDA)
 
 disp = adafruit_ssd1305.SSD1305_I2C(128, 32, i2c, reset=oled_reset)
 
-
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
@@ -35,11 +34,6 @@ x = 0
  
 # Load default font.
 font = ImageFont.load_default()
- 
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the
-# same directory as the python script!
-# Some other nice fonts to try: http://www.dafont.com/bitmap.php
-#font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 9)
 
 string = ""
 
@@ -63,7 +57,6 @@ def thread2():
         disp.image(image)
         disp.show()
         counter = counter + 1
-        time.sleep(0.01)
 
 threading.Thread(target = thread2).start()
 threading.Thread(target = thread1).start()
