@@ -15,11 +15,7 @@ i2c = busio.I2C(SCL, SDA)
 
 disp = adafruit_ssd1305.SSD1305_I2C(128, 32, i2c, reset=oled_reset)
 
-# Clear display.
-disp.fill(0)
-disp.show()
- 
-# Create blank image for drawing.
+
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
@@ -28,9 +24,6 @@ image = Image.new('1', (width, height))
 # Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
  
-# Draw a black filled box to clear the image.
-draw.rectangle((0, 0, width, height), outline=0, fill=0)
-
 # Draw some shapes.
 # First define some constants to allow easy resizing of shapes.
 padding = -2
@@ -53,7 +46,6 @@ string = ""
 #FUNCTIONS
 
 key="lol"
-lastkey = "lol2"
 
 def thread1():
     global key
@@ -63,13 +55,18 @@ def thread1():
             key = getch.getch()
 
 def thread2():
+    counter = 0
+    print ("thread2 started")
     while True:
-        draw.text((x,top+0), str(key), font=font, fill=255)
+        draw.rectangle((0,0,width,height),outline=0, fill=0)
+        draw.text((x,top+0), str(counter), font=font, fill=255)
         disp.image(image)
         disp.show()
+        counter = counter + 1
+        time.sleep(0.01)
 
+threading.Thread(target = thread2).start()
 threading.Thread(target = thread1).start()
-threading.Thread(target = thread2.start()
 
 while True:
     print(key)
