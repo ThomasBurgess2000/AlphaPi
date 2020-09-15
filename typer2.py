@@ -50,6 +50,7 @@ location_x = 0
 
 def main(stdscr):
     #stdscr.nodelay(True)
+    print(len(copy_of_output))
     return stdscr.getch()
 
 def fontchooser():
@@ -102,7 +103,7 @@ while True:
     if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
         copy_of_output = copy_of_output + "                     "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    print(len(copy_of_output))
+    
     linewriter(copy_of_output)
     disp.image(image)
     disp.show()
