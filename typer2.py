@@ -94,6 +94,7 @@ while True:
         i = 0
         while i < modifier:
             copy_of_output = copy_of_output + " "
+            print (i)
             i += 1
     elif (keypress <= 255):
         outputstring = outputstring + chr(keypress)
