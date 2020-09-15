@@ -90,7 +90,7 @@ while True:
         if len(copy_of_output) <= 21:
             modifier = 21 - len(copy_of_output)
         else:
-            modifier = len(copy_of_output)%21
+            modifier = 21- (len(copy_of_output)%21)
         i = 0
         while i < modifier:
             copy_of_output = copy_of_output + " "
@@ -102,12 +102,8 @@ while True:
     elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
         outputstring = outputstring[:-1]
         copy_of_output = copy_of_output[:-1]
-        if len(copy_of_output) % 20 == 0 and len(copy_of_output) >= 84:
-            copy_of_output = copy_of_output[:-21]
-        elif len(copy_of_output) % 20 == 0:
+        if len(copy_of_output) % 20 == 0:
             copy_of_output = copy_of_output.rstrip()
-    if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
-        copy_of_output = copy_of_output + "                     "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     
     linewriter(copy_of_output)
