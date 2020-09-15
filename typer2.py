@@ -106,6 +106,6 @@ while True:
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     if (len(copy_of_output)>84):
         copy_of_output = copy_of_output[21:]
-    linewriter(copy_of_output,len(copy_of_output)
+    linewriter(copy_of_output,len(copy_of_output))
     disp.image(image)
     disp.show()
