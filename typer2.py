@@ -34,8 +34,9 @@ x = 0
 # Load default font.
 font = ImageFont.load_default()
 
-string = ""
-
+outputstring = ""
+black = "black"
+white = "white"
 #FUNCTIONS
 
 
@@ -50,11 +51,8 @@ def main(stdscr):
 while True:
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
-    if (keypress == ord('a')):
-        print ("a pressed")
-    if (keypress == curses.KEY_RIGHT):
-        location_x += 1
-    draw.rectangle((0,0,width,height),outline=0,fill=0)
-    draw.point((location_x, 5), fill="white")
+    outputstring = outputstring + str(keypress)
+    draw.rectangle((0,0,width,height),outline=0,fill=black)
+    draw.text(x, top+0), outputstring, font=font, fill=white)
     disp.image(image)
     disp.show()
