@@ -42,13 +42,11 @@ key="lol"
 
 def main(stdscr):
     stdscr.nodelay(True)
-    return stdscr.getch()
+    return stdscr.getkey()
 
 
 
 while True:
     keypress = curses.wrapper(main)
-    #print ("key:", keypress)
-    if (keypress == KEY_RIGHT):
-        print("right")
+    print ("key:", keypress)
     
