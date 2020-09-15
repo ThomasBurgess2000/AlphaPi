@@ -102,7 +102,7 @@ while True:
     elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
         outputstring = outputstring[:-1]
         copy_of_output = copy_of_output[:-1]
-        if (len(copy_of_output)/20 - (len(copy_of_output) % 20)) == 1:
+        if ((len(copy_of_output)/20) - (len(copy_of_output) % 20)) == 1:
             copy_of_output = copy_of_output.rstrip()
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     
