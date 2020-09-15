@@ -35,12 +35,16 @@ x = 0
 font = ImageFont.load_default()
 # font = ImageFont.truetype('minecraftia.ttf',8)
 
+#The version of the string that is saved to file
 outputstring = ""
+#The version of the string that is displayed
+copy_of_output = ""
 black = "black"
 white = "white"
 #FUNCTIONS
 
 modifier = 0
+every_21 = 0
 
 location_x = 0
 
@@ -51,27 +55,31 @@ def main(stdscr):
 def fontchooser():
     return ("Nothing")
 
-def linewriter(outputstring,modifier):
-    string_adj_len = len(outputstring) + modifier
-    if string_adj_len < 21:
-        draw.text((x, top+0), outputstring, font=font, fill=white)
-    elif string_adj_len < 41:
-        draw.text((x, top+0), outputstring[:21], font=font, fill=white)
-        draw.text((x, top+8), outputstring[21:], font=font, fill=white)
-    elif string_adj_len < 61:
-        draw.text((x, top+0), outputstring[:21], font=font, fill=white)
-        draw.text((x, top+8), outputstring[21:42], font=font, fill=white)
-        draw.text((x, top+16), outputstring[42:], font=font, fill=white)
-    elif string_adj_len < 81:
-        draw.text((x, top-2), outputstring[:21], font=font, fill=white)
-        draw.text((x, top+6), outputstring[21:42], font=font, fill=white)
-        draw.text((x, top+14), outputstring[42:63], font=font, fill=white)
-        draw.text((x, top+23), outputstring[63:], font=font, fill=white)
-    elif string_adj_len >= 81:
-        draw.text((x, top+0), outputstring[-84:-63], font=font, fill=white)
-        draw.text((x, top+8), outputstring[-63:-42], font=font, fill=white)
-        draw.text((x, top+16), outputstring[-42:-21], font=font, fill=white)
-        draw.text((x, top+25), outputstring[-21:], font=font, fill=white)
+def linewriter(copy_of_output):
+    # Trying to allow for line breaks
+    string_adj_len = len(copy_of_output)
+    if string_adj_len % 21 == 0 and string_adj_len >= 84:
+        copy_of_output = copy_of_output + "                     "
+    if string_adj_len <= 21:
+        draw.text((x, top+0), copy_of_output, font=font, fill=white)
+    elif string_adj_len <= 42:
+        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+8), copy_of_output[21:], font=font, fill=white)
+    elif string_adj_len <= 63:
+        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+8), copy_of_output[21:42], font=font, fill=white)
+        draw.text((x, top+16), copy_of_output[42:], font=font, fill=white)
+    # Changes distance from top to prevent last line from going off of screen
+    elif string_adj_len <= 84:
+        draw.text((x, top-2), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+6), copy_of_output[21:42], font=font, fill=white)
+        draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
+        draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
+    elif string_adj_len > 84:
+        draw.text((x, top-2), copy_of_output[-84:-63], font=font, fill=white)
+        draw.text((x, top+6), copy_of_output[-63:-42], font=font, fill=white)
+        draw.text((x, top+14), copy_of_output[-42:-21], font=font, fill=white)
+        draw.text((x, top+23), copy_of_output[-21:], font=font, fill=white)
 
 while True:
     
@@ -79,12 +87,16 @@ while True:
     #print ("key:", keypress)
     if (keypress <= 255):
         outputstring = outputstring + chr(keypress)
+        copy_of_output = copy_of_output + chr(keypress)
     elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
         outputstring = outputstring[:-1]
+        copy_of_output = copy_of_output[:-1]
     elif (keypress == curses.ENTER):
         outputstring = outputstring + "\n"
-        modifier = len(outputstring)%20
+        modifier = len(copy_of_output)%21
+        for x in range(modifier):
+            copy_of_output = copy_of_output + " "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    linewriter(outputstring,modifier)
+    linewriter(copy_of_output)
     disp.image(image)
     disp.show()
