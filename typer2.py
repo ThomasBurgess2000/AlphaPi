@@ -60,7 +60,11 @@ while True:
     if len(outputstring) < 21:
         draw.text((x, top+0), outputstring, font=font, fill=white)
     elif len(outputstring) < 41:
-        draw.text((x, top+0), outputstring[:20], font=font, fill=white)
-        draw.text((x, top+8), outputstring[20:], font=font, fill=white)
+        draw.text((x, top+0), outputstring[:21], font=font, fill=white)
+        draw.text((x, top+8), outputstring[21:], font=font, fill=white)
+    elif len(outputstring) < 61:
+        draw.text((x, top+0), outputstring[:21], font=font, fill=white)
+        draw.text((x, top+8), outputstring[21:41], font=font, fill=white)
+        draw.text((x, top+8), outputstring[41:], font=font, fill=white)
     disp.image(image)
     disp.show()
