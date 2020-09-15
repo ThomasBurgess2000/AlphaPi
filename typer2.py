@@ -42,7 +42,7 @@ string = ""
 location_x = 0
 
 def main(stdscr):
-    stdscr.nodelay(True)
+    #stdscr.nodelay(True)
     return stdscr.getch()
 
 
