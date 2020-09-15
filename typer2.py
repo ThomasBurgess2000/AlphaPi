@@ -57,9 +57,8 @@ def main(stdscr):
 def fontchooser():
     return ("Nothing")
 
-def linewriter(copy_of_output):
-    # Trying to allow for line breaks
-    string_adj_len = len(copy_of_output)
+def linewriter(copy_of_output,string_adj_len):
+  
     if string_adj_len <= 21:
         draw.text((x, top+0), copy_of_output, font=font, fill=white)
     elif string_adj_len <= 42:
@@ -76,10 +75,10 @@ def linewriter(copy_of_output):
         draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
     elif string_adj_len > 84:
-        draw.text((x, top-2), copy_of_output[-84:-63], font=font, fill=white)
-        draw.text((x, top+6), copy_of_output[-63:-42], font=font, fill=white)
-        draw.text((x, top+14), copy_of_output[-42:-21], font=font, fill=white)
-        draw.text((x, top+23), copy_of_output[-21:], font=font, fill=white)
+        # draw.text((x, top-2), copy_of_output[-84:-63], font=font, fill=white)
+        # draw.text((x, top+6), copy_of_output[-63:-42], font=font, fill=white)
+        # draw.text((x, top+14), copy_of_output[-42:-21], font=font, fill=white)
+        # draw.text((x, top+23), copy_of_output[-21:], font=font, fill=white)
 
 while True:
     
@@ -105,7 +104,8 @@ while True:
         if ((len(copy_of_output)//20) - (len(copy_of_output) % 20)) == 1:
             copy_of_output = copy_of_output.rstrip()
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    
-    linewriter(copy_of_output)
+    if (len(copy_of_output>84):
+        copy_of_output = copy_of_output[21:]
+    linewriter(copy_of_output,len(copy_of_output)
     disp.image(image)
     disp.show()
