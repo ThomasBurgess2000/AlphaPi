@@ -50,7 +50,7 @@ while True:
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
     if (keypress == ord('a')):
-        print ("a pressed"
+        print ("a pressed")
     if (keypress == curses.KEY_RIGHT):
         print ("right pressed")
     
