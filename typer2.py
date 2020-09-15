@@ -74,7 +74,7 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+6), copy_of_output[21:42], font=font, fill=white)
         draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
-    elif string_adj_len > 84:
+    #elif string_adj_len > 84:
         # draw.text((x, top-2), copy_of_output[-84:-63], font=font, fill=white)
         # draw.text((x, top+6), copy_of_output[-63:-42], font=font, fill=white)
         # draw.text((x, top+14), copy_of_output[-42:-21], font=font, fill=white)
