@@ -48,6 +48,7 @@ def main(stdscr):
     return stdscr.getch()
 
 def fontchooser():
+    return ("Nothing")
 
 def linewriter(outputstring):
 
