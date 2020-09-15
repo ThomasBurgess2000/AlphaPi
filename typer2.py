@@ -40,6 +40,7 @@ black = "black"
 white = "white"
 #FUNCTIONS
 
+modifier = 0
 
 location_x = 0
 
@@ -50,29 +51,30 @@ def main(stdscr):
 def fontchooser():
     return ("Nothing")
 
-def linewriter(outputstring):
-
-    if len(outputstring) < 21:
+def linewriter(outputstring,modifier):
+    string_adj_len = len(outputstring) + modifier
+    if string_adj_len < 21:
         draw.text((x, top+0), outputstring, font=font, fill=white)
-    elif len(outputstring) < 41:
+    elif string_adj_len < 41:
         draw.text((x, top+0), outputstring[:21], font=font, fill=white)
         draw.text((x, top+8), outputstring[21:], font=font, fill=white)
-    elif len(outputstring) < 61:
+    elif string_adj_len < 61:
         draw.text((x, top+0), outputstring[:21], font=font, fill=white)
         draw.text((x, top+8), outputstring[21:41], font=font, fill=white)
         draw.text((x, top+16), outputstring[41:], font=font, fill=white)
-    elif len(outputstring) < 81:
+    elif string_adj_len < 81:
         draw.text((x, top+0), outputstring[:21], font=font, fill=white)
         draw.text((x, top+8), outputstring[21:41], font=font, fill=white)
         draw.text((x, top+16), outputstring[41:61], font=font, fill=white)
         draw.text((x, top+25), outputstring[61:], font=font, fill=white)
-    elif len(outputstring) >= 81:
+    elif string_adj_len >= 81:
         draw.text((x, top+0), outputstring[-80:-60], font=font, fill=white)
         draw.text((x, top+8), outputstring[-60:-40], font=font, fill=white)
         draw.text((x, top+16), outputstring[-40:-20], font=font, fill=white)
         draw.text((x, top+25), outputstring[-20:], font=font, fill=white)
 
 while True:
+    
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
     if (keypress <= 255):
@@ -81,7 +83,8 @@ while True:
         outputstring = outputstring[:-1]
     elif (keypress == curses.ENTER):
         outputstring = outputstring + "\n"
+        modifier = len(outputstring)%20
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    linewriter(outputstring)
+    linewriter(outputstring,modifier)
     disp.image(image)
     disp.show()
