@@ -98,8 +98,10 @@ while True:
             modifier = 21 - len(copy_of_output)
         else:
             modifier = len(copy_of_output)%21
-        for x in range(modifier):
+        i = 0
+        while i < modifier:
             copy_of_output = copy_of_output + " "
+            i += 1
     if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
         copy_of_output = copy_of_output + "                     "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
