@@ -51,7 +51,10 @@ def main(stdscr):
 while True:
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
-    outputstring = outputstring + chr(keypress)
+    if (keypress <= 255):
+        outputstring = outputstring + chr(keypress)
+    elif (keypress == 256):
+        outputstring = outputstring[:-1]
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     if len(outputstring) < 21:
         draw.text((x, top+0), outputstring, font=font, fill=white)
