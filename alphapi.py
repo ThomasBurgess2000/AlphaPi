@@ -55,6 +55,8 @@ disp.image(image)
 disp.show()
 time.sleep(3)
 
+image = Image.new('1', (width, height))
+
 def main(stdscr):
     #stdscr.nodelay(True)
     print("Display output: " + copy_of_output + "\n")
