@@ -60,13 +60,13 @@ def linewriter(outputstring,modifier):
         draw.text((x, top+8), outputstring[21:], font=font, fill=white)
     elif string_adj_len < 61:
         draw.text((x, top+0), outputstring[:21], font=font, fill=white)
-        draw.text((x, top+8), outputstring[21:41], font=font, fill=white)
-        draw.text((x, top+16), outputstring[41:], font=font, fill=white)
+        draw.text((x, top+8), outputstring[21:42], font=font, fill=white)
+        draw.text((x, top+16), outputstring[42:], font=font, fill=white)
     elif string_adj_len < 81:
         draw.text((x, top+0), outputstring[:21], font=font, fill=white)
-        draw.text((x, top+8), outputstring[21:41], font=font, fill=white)
-        draw.text((x, top+16), outputstring[41:61], font=font, fill=white)
-        draw.text((x, top+25), outputstring[61:], font=font, fill=white)
+        draw.text((x, top+8), outputstring[21:42], font=font, fill=white)
+        draw.text((x, top+16), outputstring[42:63], font=font, fill=white)
+        draw.text((x, top+25), outputstring[63:], font=font, fill=white)
     elif string_adj_len >= 81:
         draw.text((x, top+0), outputstring[-80:-60], font=font, fill=white)
         draw.text((x, top+8), outputstring[-60:-40], font=font, fill=white)
