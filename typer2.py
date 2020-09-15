@@ -54,6 +54,7 @@ while True:
     if (keypress <= 255):
         outputstring = outputstring + chr(keypress)
     elif (keypress == 256):
+        print("backspace entered")
         outputstring = outputstring[:-1]
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     if len(outputstring) < 21:
