@@ -53,7 +53,7 @@ while True:
     if (keypress == ord('a')):
         print ("a pressed")
     if (keypress == curses.KEY_RIGHT):
-        location += 1
+        location_x += 1
     draw.rectangle((0,0,width,height),outline=0,fill=0)
     draw.point((location_x, 5), fill="white")
     disp.image(image)
