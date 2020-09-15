@@ -48,5 +48,7 @@ def main(stdscr):
 
 while True:
     keypress = curses.wrapper(main)
-    print ("key:", keypress)
+    #print ("key:", keypress)
+    if (keypress = KEY_RIGHT):
+        print("right")
     
