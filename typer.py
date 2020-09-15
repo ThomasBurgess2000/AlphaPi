@@ -58,8 +58,12 @@ def thread2():
         disp.show()
         counter = counter + 1
 
-threading.Thread(target = thread2).start()
-threading.Thread(target = thread1).start()
+procThread2 = threading.Thread(target = thread2)
+procThread2.daemon = True
+procThread1 = threading.Thread(target = thread1)
+procThread1.daemon = True
+procThread2.start()
+procThread1.start()
 
 while True:
     print(key)
