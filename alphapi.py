@@ -48,6 +48,13 @@ every_21 = 0
 
 location_x = 0
 
+# Loading screen
+image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/alphapismallbw.png')
+image = image.convert('1')
+disp.image(image)
+disp.show()
+time.sleep(3)
+
 def main(stdscr):
     #stdscr.nodelay(True)
     print("Display output: " + copy_of_output + "\n")
