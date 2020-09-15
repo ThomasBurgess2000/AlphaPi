@@ -85,7 +85,7 @@ while True:
     
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
-    if (keypress == curses.ENTER):
+    if (keypress == curses.KEY_ENTER):
         outputstring = outputstring + "\n"
         if len(copy_of_output) <= 21:
             modifier = 21 - len(copy_of_output)
