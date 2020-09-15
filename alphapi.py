@@ -19,8 +19,8 @@ width = disp.width
 height = disp.height
 
 # Splash screen
-image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/alphapismallbw.png')
-image = image.convert('1')
+image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/piskel.png')
+#image = image.convert('1')
 disp.image(image)
 disp.show()
 time.sleep(3)
