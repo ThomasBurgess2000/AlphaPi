@@ -53,6 +53,6 @@ while True:
     #print ("key:", keypress)
     outputstring = outputstring + str(keypress)
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    draw.text(x, top+0), outputstring, font=font, fill=white)
+    draw.text((x, top+0), outputstring, font=font, fill=white)
     disp.image(image)
     disp.show()
