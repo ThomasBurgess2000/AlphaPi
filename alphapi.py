@@ -17,6 +17,14 @@ disp = adafruit_ssd1305.SSD1305_I2C(128, 32, i2c, reset=oled_reset)
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
+
+# Splash screen
+image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/alphapismallbw.png')
+image = image.convert('1')
+disp.image(image)
+disp.show()
+time.sleep(3)
+
 image = Image.new('1', (width, height))
  
 # Get drawing object to draw on image.
@@ -48,14 +56,6 @@ every_21 = 0
 
 location_x = 0
 
-# Loading screen
-image = Image.open(r'/home/pi/oled_bonnet/oled_bonnet/alphapismallbw.png')
-image = image.convert('1')
-disp.image(image)
-disp.show()
-time.sleep(3)
-
-image = Image.new('1', (width, height))
 
 def main(stdscr):
     #stdscr.nodelay(True)
