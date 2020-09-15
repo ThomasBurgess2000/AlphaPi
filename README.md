@@ -9,4 +9,7 @@ game.py allows you to use pygame functions and event handling without using its 
 photo.py displays an image that you add to the same directory as the script.
 
 ## typer.py
-typer.py is currently non-functional. Trying to make a way to display input from keyboard using keyboard polling without pygame, but it's not working yet. Feel free to help on this.
+typer.py is currently non-functional.
+
+## typer2.py
+typer2.py is a basic text-entry script built using the curses module. Updates the screen with characters typed.
