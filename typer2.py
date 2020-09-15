@@ -53,7 +53,7 @@ while True:
     #print ("key:", keypress)
     if (keypress <= 255):
         outputstring = outputstring + chr(keypress)
-    elif (keypress == 256):
+    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
         print("backspace entered")
         outputstring = outputstring[:-1]
     draw.rectangle((0,0,width,height),outline=0,fill=black)
