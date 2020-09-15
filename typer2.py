@@ -58,8 +58,6 @@ def fontchooser():
 def linewriter(copy_of_output):
     # Trying to allow for line breaks
     string_adj_len = len(copy_of_output)
-    if string_adj_len % 21 == 0 and string_adj_len >= 84:
-        copy_of_output = copy_of_output + "                     "
     if string_adj_len <= 21:
         draw.text((x, top+0), copy_of_output, font=font, fill=white)
     elif string_adj_len <= 42:
@@ -96,6 +94,8 @@ while True:
         modifier = len(copy_of_output)%21
         for x in range(modifier):
             copy_of_output = copy_of_output + " "
+    if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
+        copy_of_output = copy_of_output + "                     "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     linewriter(copy_of_output)
     disp.image(image)
