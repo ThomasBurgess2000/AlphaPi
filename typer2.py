@@ -47,17 +47,10 @@ def main(stdscr):
     #stdscr.nodelay(True)
     return stdscr.getch()
 
+def fontchooser():
 
+def linewriter(outputstring):
 
-while True:
-    keypress = curses.wrapper(main)
-    #print ("key:", keypress)
-    if (keypress <= 255):
-        outputstring = outputstring + chr(keypress)
-    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
-        print("backspace entered")
-        outputstring = outputstring[:-1]
-    draw.rectangle((0,0,width,height),outline=0,fill=black)
     if len(outputstring) < 21:
         draw.text((x, top+0), outputstring, font=font, fill=white)
     elif len(outputstring) < 41:
@@ -77,5 +70,17 @@ while True:
         draw.text((x, top+8), outputstring[-60:-40], font=font, fill=white)
         draw.text((x, top+16), outputstring[-40:-20], font=font, fill=white)
         draw.text((x, top+25), outputstring[-20:], font=font, fill=white)
+
+while True:
+    keypress = curses.wrapper(main)
+    #print ("key:", keypress)
+    if (keypress <= 255):
+        outputstring = outputstring + chr(keypress)
+    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
+        outputstring = outputstring[:-1]
+    elif (keypress == curses.ENTER):
+        outputstring = outputstring + "\n"
+    draw.rectangle((0,0,width,height),outline=0,fill=black)
+    linewriter(outputstring)
     disp.image(image)
     disp.show()
