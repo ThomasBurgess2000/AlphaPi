@@ -38,7 +38,8 @@ string = ""
 
 #FUNCTIONS
 
-key="lol"
+
+location_x = 0
 
 def main(stdscr):
     stdscr.nodelay(True)
@@ -52,5 +53,8 @@ while True:
     if (keypress == ord('a')):
         print ("a pressed")
     if (keypress == curses.KEY_RIGHT):
-        print ("right pressed")
-    
+        location += 1
+    draw.rectangle((0,0,width,height),outline=0,fill=0)
+	draw.point((location_x, 5), fill="white")
+	disp.image(image)
+	disp.show()
