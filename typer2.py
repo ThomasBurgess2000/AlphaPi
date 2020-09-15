@@ -85,15 +85,7 @@ while True:
     
     keypress = curses.wrapper(main)
     #print ("key:", keypress)
-    if (keypress <= 255):
-        outputstring = outputstring + chr(keypress)
-        copy_of_output = copy_of_output + chr(keypress)
-    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
-        outputstring = outputstring[:-1]
-        copy_of_output = copy_of_output[:-1]
-        if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
-            copy_of_output = copy_of_output[:-21]
-    elif (keypress == curses.ENTER):
+    if (keypress == curses.ENTER):
         outputstring = outputstring + "\n"
         if len(copy_of_output) <= 21:
             modifier = 21 - len(copy_of_output)
@@ -103,6 +95,14 @@ while True:
         while i < modifier:
             copy_of_output = copy_of_output + " "
             i += 1
+    elif (keypress <= 255):
+        outputstring = outputstring + chr(keypress)
+        copy_of_output = copy_of_output + chr(keypress)
+    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
+        outputstring = outputstring[:-1]
+        copy_of_output = copy_of_output[:-1]
+        if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
+            copy_of_output = copy_of_output[:-21]
     if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
         copy_of_output = copy_of_output + "                     "
     draw.rectangle((0,0,width,height),outline=0,fill=black)
