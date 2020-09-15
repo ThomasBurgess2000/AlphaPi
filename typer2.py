@@ -55,6 +55,6 @@ while True:
     if (keypress == curses.KEY_RIGHT):
         location += 1
     draw.rectangle((0,0,width,height),outline=0,fill=0)
-	draw.point((location_x, 5), fill="white")
-	disp.image(image)
+    draw.point((location_x, 5), fill="white")
+    disp.image(image)
 	disp.show()
