@@ -33,7 +33,7 @@ x = 0
  
 # Load default font.
 # font = ImageFont.load_default()
-font = ImageFont.truetype('vcrosdmono.ttf',9)
+font = ImageFont.truetype('vcrosdmono.ttf',10)
 
 outputstring = ""
 black = "black"
