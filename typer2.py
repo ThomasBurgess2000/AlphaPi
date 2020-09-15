@@ -51,7 +51,10 @@ location_x = 0
 def main(stdscr):
     #stdscr.nodelay(True)
     print(len(copy_of_output))
+    print("Display output:")
     print(copy_of_output)
+    print("Saved output:")
+    print (outputstring)
     return stdscr.getch()
 
 def fontchooser():
