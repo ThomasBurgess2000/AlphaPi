@@ -32,8 +32,8 @@ x = 0
  
  
 # Load default font.
-# font = ImageFont.load_default()
-font = ImageFont.truetype('minecraftia.ttf',8)
+font = ImageFont.load_default()
+# font = ImageFont.truetype('minecraftia.ttf',8)
 
 outputstring = ""
 black = "black"
