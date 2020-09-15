@@ -90,7 +90,7 @@ while True:
         outputstring = outputstring[:-1]
         copy_of_output = copy_of_output[:-1]
         if len(copy_of_output) % 21 == 0 and len(copy_of_output) >= 84:
-        copy_of_output = copy_of_output[:-21]
+            copy_of_output = copy_of_output[:-21]
     elif (keypress == curses.ENTER):
         outputstring = outputstring + "\n"
         modifier = len(copy_of_output)%21
