@@ -4,15 +4,20 @@ from board import SCL, SDA, D4
 import busio
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1305
+
 import keyboard
 import string
 import curses
 
-oled_reset = digitalio.DigitalInOut(D4)
-i2c = busio.I2C(SCL, SDA)
 
-disp = adafruit_ssd1305.SSD1305_I2C(128, 32, i2c, reset=oled_reset)
+# 400x240 Sharp Memory Display
+import adafruit_sharpmemorydisplay
+spi = busio.SPI(board.SCK, MOSI=board.MOSI)
+scs = digitalio.DigitalInOut(board.D6)
+disp = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
+FONTSIZE = 40
+font = ImageFont.truetype("usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
+
 
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
@@ -37,11 +42,7 @@ top = padding
 bottom = height-padding
 # Move left to right keeping track of the current x position for drawing shapes.
 x = 0
- 
- 
-# Load default font.
-font = ImageFont.load_default()
-# font = ImageFont.truetype('minecraftia.ttf',8)
+
 
 #The version of the string that is saved to file
 outputstring = ""
