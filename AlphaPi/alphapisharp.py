@@ -57,10 +57,10 @@ every_21 = 0
 
 location_x = 0
 
-first_line = 20
-second_line = 40
-third_line = 60
-fourth_line = 80
+first_line = 16
+second_line = 32
+third_line = 48
+fourth_line = 64
 fifth_line = 100
 sixth_line = 120
 
