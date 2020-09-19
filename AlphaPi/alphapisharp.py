@@ -57,12 +57,12 @@ every_21 = 0
 
 location_x = 0
 
-first_line = 17
-second_line = 34
-third_line = 51
-fourth_line = 68
-fifth_line = 85
-sixth_line = 102
+first_line = 16
+second_line = 32
+third_line = 48
+fourth_line = 64
+fifth_line = 80
+sixth_line = 96
 
 
 def main(stdscr):
