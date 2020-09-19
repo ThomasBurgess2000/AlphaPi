@@ -61,8 +61,8 @@ first_line = 16
 second_line = 32
 third_line = 48
 fourth_line = 64
-fifth_line = 100
-sixth_line = 120
+fifth_line = 80
+sixth_line = 96
 
 
 def main(stdscr):
@@ -91,6 +91,12 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+40), copy_of_output[first_line:second_line], font=font, fill=white)
         draw.text((x, top+80), copy_of_output[second_line:third_line], font=font, fill=white)
         draw.text((x, top+120), copy_of_output[third_line:], font=font, fill=white)
+    elif string_adj_len <= fifth_line:
+        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        draw.text((x, top+40), copy_of_output[first_line:second_line], font=font, fill=white)
+        draw.text((x, top+80), copy_of_output[second_line:third_line], font=font, fill=white)
+        draw.text((x, top+120), copy_of_output[third_line:fourth_line], font=font, fill=white)
+        draw.text((x, top+120), copy_of_output[fourth_line:], font=font, fill=white)
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
@@ -98,10 +104,10 @@ while True:
     #print ("key:", keypress)
     if (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
         outputstring = outputstring + "\n"
-        if len(copy_of_output) <= 21:
-            modifier = 21 - len(copy_of_output)
+        if len(copy_of_output) <= first_line:
+            modifier = first_line - len(copy_of_output)
         else:
-            modifier = 21- (len(copy_of_output)%21)
+            modifier = first_line - (len(copy_of_output)%first_line)
         i = 0
         while i < modifier:
             copy_of_output = copy_of_output + " "
@@ -113,11 +119,11 @@ while True:
     elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
         outputstring = outputstring[:-1]
         copy_of_output = copy_of_output[:-1]
-        if ((len(copy_of_output)//20) - (len(copy_of_output) % 20)) == 1:
+        if ((len(copy_of_output)//first_line-1) - (len(copy_of_output) % first_line-1)) == 1:
             copy_of_output = copy_of_output.rstrip()
     draw.rectangle((0,0,width,height),outline=0,fill=black)
-    if (len(copy_of_output)>84):
-        copy_of_output = copy_of_output[21:]
+    if (len(copy_of_output)>fifth_line):
+        copy_of_output = copy_of_output[first_line:]
     linewriter(copy_of_output,len(copy_of_output))
     disp.image(image)
     disp.show()
