@@ -97,7 +97,7 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
         draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
         draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=white)
-        draw.text((x, top+120), copy_of_output[fourth_line:], font=font, fill=white)
+        draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:], font=font, fill=white)
     elif string_adj_len <= sixth_line:
         draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
         draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
