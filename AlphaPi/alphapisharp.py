@@ -57,6 +57,13 @@ every_21 = 0
 
 location_x = 0
 
+first_line = 17
+second_line = 34
+third_line = 51
+fourth_line = 68
+fifth_line = 85
+sixth_line = 102
+
 
 def main(stdscr):
     #stdscr.nodelay(True)
@@ -69,21 +76,21 @@ def fontchooser():
 
 def linewriter(copy_of_output,string_adj_len):
   
-    if string_adj_len <= 21:
+    if string_adj_len <= first_line:
         draw.text((x, top+0), copy_of_output, font=font, fill=white)
-    elif string_adj_len <= 42:
-        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
-        draw.text((x, top+8), copy_of_output[21:], font=font, fill=white)
-    elif string_adj_len <= 63:
-        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
-        draw.text((x, top+8), copy_of_output[21:42], font=font, fill=white)
-        draw.text((x, top+16), copy_of_output[42:], font=font, fill=white)
+    elif string_adj_len <= second_line:
+        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        draw.text((x, top+40), copy_of_output[first_line:], font=font, fill=white)
+    elif string_adj_len <= third_line:
+        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        draw.text((x, top+40), copy_of_output[first_line:second_line], font=font, fill=white)
+        draw.text((x, top+80), copy_of_output[second_line:], font=font, fill=white)
     # Changes distance from top to prevent last line from going off of screen
-    elif string_adj_len <= 84:
-        draw.text((x, top-2), copy_of_output[:21], font=font, fill=white)
-        draw.text((x, top+6), copy_of_output[21:42], font=font, fill=white)
-        draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
-        draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
+    elif string_adj_len <= fourth_line:
+        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        draw.text((x, top+40), copy_of_output[first_line:second_line], font=font, fill=white)
+        draw.text((x, top+80), copy_of_output[second_line:third_line], font=font, fill=white)
+        draw.text((x, top+120), copy_of_output[third_line:], font=font, fill=white)
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
