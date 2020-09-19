@@ -11,7 +11,7 @@ scs = digitalio.DigitalInOut(board.D6)  # inverted chip select
 
 # pass in the display size, width and height, as well
 # display = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 96, 96)
-display = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 144, 168)
+display = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
 
 print("Pixel test")
 
