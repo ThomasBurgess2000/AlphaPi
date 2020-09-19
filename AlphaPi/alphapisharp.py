@@ -102,8 +102,8 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+40), copy_of_output[first_line:second_line], font=font, fill=white)
         draw.text((x, top+80), copy_of_output[second_line:third_line], font=font, fill=white)
         draw.text((x, top+120), copy_of_output[third_line:fourth_line], font=font, fill=white)
-        draw.text((x, top+140), copy_of_output[fourth_line:fifth_line], font=font, fill=white)
-        draw.text((x, top+160), copy_of_output[fifth_line:], font=font, fill=white)
+        draw.text((x, top+160), copy_of_output[fourth_line:fifth_line], font=font, fill=white)
+        draw.text((x, top+200), copy_of_output[fifth_line:], font=font, fill=white)
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
