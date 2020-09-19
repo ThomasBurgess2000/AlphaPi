@@ -78,33 +78,33 @@ def fontchooser():
 def linewriter(copy_of_output,string_adj_len):
   
     if string_adj_len <= first_line:
-        draw.text((x, top+0), copy_of_output, font=font, fill=white)
+        disp.text((x, top+0), copy_of_output, font=font, fill=white)
     elif string_adj_len <= second_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=white)
+        disp.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        disp.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=white)
     elif string_adj_len <= third_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:], font=font, fill=white)
+        disp.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        disp.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*2), copy_of_output[second_line:], font=font, fill=white)
     # Changes distance from top to prevent last line from going off of screen
     elif string_adj_len <= fourth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:], font=font, fill=white)
+        disp.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        disp.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*3), copy_of_output[third_line:], font=font, fill=white)
     elif string_adj_len <= fifth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:], font=font, fill=white)
+        disp.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        disp.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*4), copy_of_output[fourth_line:], font=font, fill=white)
     elif string_adj_len <= sixth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:fifth_line], font=font, fill=white)
-        draw.text((x, top+(line_height)*5), copy_of_output[fifth_line:], font=font, fill=white)
+        disp.text((x, top+0), copy_of_output[:first_line], font=font, fill=white)
+        disp.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*4), copy_of_output[fourth_line:fifth_line], font=font, fill=white)
+        disp.text((x, top+(line_height)*5), copy_of_output[fifth_line:], font=font, fill=white)
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
