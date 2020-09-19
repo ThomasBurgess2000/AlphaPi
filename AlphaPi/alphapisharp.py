@@ -17,7 +17,7 @@ scs = digitalio.DigitalInOut(board.D6)
 disp = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
 FONTSIZE = 40
 #font = ImageFont.truetype("usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
-font = ImageFont.load_default()
+font = ImageFont.truetype("RobotoMono.ttf", FONTSIZE)
 
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
