@@ -133,5 +133,5 @@ while True:
     if (len(copy_of_output)>sixth_line):
         copy_of_output = copy_of_output[first_line:]
     linewriter(copy_of_output,len(copy_of_output))
-    disp.image(image)
+    #disp.image(image)
     disp.show()
