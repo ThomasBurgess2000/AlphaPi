@@ -67,20 +67,20 @@ def fontchooser():
 def linewriter(copy_of_output,string_adj_len):
   
     if string_adj_len <= 21:
-        draw.multiline_text((x, top+0), copy_of_output, font=font, fill=white,spacing=8, align='left')
-    # elif string_adj_len <= 42:
-    #     draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
-    #     draw.text((x, top+8), copy_of_output[21:], font=font, fill=white)
-    # elif string_adj_len <= 63:
-    #     draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
-    #     draw.text((x, top+8), copy_of_output[21:42], font=font, fill=white)
-    #     draw.text((x, top+16), copy_of_output[42:], font=font, fill=white)
-    # # Changes distance from top to prevent last line from going off of screen
-    # elif string_adj_len <= 84:
-    #     draw.text((x, top-2), copy_of_output[:21], font=font, fill=white)
-    #     draw.text((x, top+6), copy_of_output[21:42], font=font, fill=white)
-    #     draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
-    #     draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
+        draw.text((x, top+0), copy_of_output, font=font, fill=white)
+    elif string_adj_len <= 42:
+        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+8), copy_of_output[21:], font=font, fill=white)
+    elif string_adj_len <= 63:
+        draw.text((x, top+0), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+8), copy_of_output[21:42], font=font, fill=white)
+        draw.text((x, top+16), copy_of_output[42:], font=font, fill=white)
+    # Changes distance from top to prevent last line from going off of screen
+    elif string_adj_len <= 84:
+        draw.text((x, top-2), copy_of_output[:21], font=font, fill=white)
+        draw.text((x, top+6), copy_of_output[21:42], font=font, fill=white)
+        draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
+        draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
