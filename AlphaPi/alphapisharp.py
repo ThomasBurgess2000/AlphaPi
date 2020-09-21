@@ -38,7 +38,7 @@ image = Image.new('1', (width, height))
  
 # Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
-draw.rectangle((0, 0, display.width, display.height), outline=WHITE, fill=WHITE)
+draw.rectangle((0, 0, width, height), outline=WHITE, fill=WHITE)
 # Draw some shapes.
 # First define some constants to allow easy resizing of shapes.
 padding = -2
