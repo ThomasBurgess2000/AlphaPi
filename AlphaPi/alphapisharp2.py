@@ -105,7 +105,7 @@ while True:
         copy_of_output = copy_of_output[:-1]
         if ((len(copy_of_output)//20) - (len(copy_of_output) % 20)) == 1:
             copy_of_output = copy_of_output.rstrip()
-    draw.rectangle((0,0,width,height),outline=0,fill=black)
+    #draw.rectangle((0,0,width,height),outline=0,fill=black)
     if (len(copy_of_output)>84):
         copy_of_output = copy_of_output[21:]
     linewriter(copy_of_output,len(copy_of_output))
