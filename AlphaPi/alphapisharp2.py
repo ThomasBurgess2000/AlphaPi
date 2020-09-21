@@ -82,7 +82,7 @@ def fontchooser():
 def linewriter(copy_of_output,string_adj_len):
   
     if string_adj_len <= first_line:
-        draw.text(copy_of_output, x, top+0, 0, size=FONTSIZE)
+        disp.text(copy_of_output, x, top+0, 0, size=FONTSIZE)
     elif string_adj_len <= second_line:
         draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
         draw.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=black)
