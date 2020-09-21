@@ -84,12 +84,12 @@ def linewriter(copy_of_output,string_adj_len):
     if string_adj_len <= first_line:
         disp.text(copy_of_output, x, top+0, 0, size=FONTSIZE)
     elif string_adj_len <= second_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=black)
+        disp.text(copy_of_output[:first_line], x, top+0, 0, size=FONTSIZE)
+        disp.text(copy_of_output[first_line:], x, top+(line_height), 0, size=FONTSIZE)
     elif string_adj_len <= third_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:], font=font, fill=black)
+        disp.text(copy_of_output[:first_line], x, top+0, 0, size=FONTSIZE)
+        disp.text(copy_of_output[first_line:second_line], x, top+(line_height), 0, size=FONTSIZE)
+        disp.text(copy_of_output[second_line:], x, top+(line_height)*2, 0, size=FONTSIZE)
     # Changes distance from top to prevent last line from going off of screen
     elif string_adj_len <= fourth_line:
         draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
