@@ -38,7 +38,8 @@ image = Image.new('1', (width, height))
  
 # Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
- 
+disp.image(image)
+disp.show()
 # Draw some shapes.
 # First define some constants to allow easy resizing of shapes.
 padding = -2
