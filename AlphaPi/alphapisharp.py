@@ -26,6 +26,8 @@ font = ImageFont.truetype("RobotoMono.ttf", FONTSIZE)
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
+BLACK = 0
+WHITE = 255
 
 # Splash screen (removed until get image with correct dimensions)
 # image = Image.open(r'piskel.png')
