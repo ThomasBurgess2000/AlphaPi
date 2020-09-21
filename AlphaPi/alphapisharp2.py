@@ -133,9 +133,10 @@ while True:
         copy_of_output = copy_of_output[:-1]
         if ((len(copy_of_output)//first_line-1) - (len(copy_of_output) % first_line-1)) == 1:
             copy_of_output = copy_of_output.rstrip()
-    draw.rectangle((0,0,width,height),outline=0,fill=white)
+    #draw.rectangle((0,0,width,height),outline=0,fill=white)
     if (len(copy_of_output)>sixth_line):
         copy_of_output = copy_of_output[first_line:]
+    disp.fill(1)
     linewriter(copy_of_output,len(copy_of_output))
-    disp.image(image)
+    #disp.image(image)
     disp.show()
