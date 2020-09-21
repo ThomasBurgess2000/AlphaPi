@@ -73,9 +73,9 @@ line_height = 35
 
 
 def main(stdscr):
-    #stdscr.nodelay(True)
-    #print("disp output: " + copy_of_output + "\n")
-    #print("Saved output: " + outputstring + "\n")
+    stdscr.nodelay(True)
+    print("disp output: " + copy_of_output + "\n")
+    print("Saved output: " + outputstring + "\n")
     return stdscr.getch()
 
 def fontchooser():
