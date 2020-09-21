@@ -14,7 +14,7 @@ import curses
 import adafruit_sharpmemorydisp
 spi = busio.SPI(board.SCK, MOSI=board.MOSI)
 scs = digitalio.DigitalInOut(board.D6)
-disp = adafruit_sharpmemorydisp.SharpMemorydisp(spi, scs, 400, 240)
+disp = adafruit_sharpmemorydisp.SharpMemorydisplay(spi, scs, 400, 240)
 print("Filling white")
 disp.fill(1)
 disp.show()
