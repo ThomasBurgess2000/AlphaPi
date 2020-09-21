@@ -10,11 +10,11 @@ import string
 import curses
 
 
-# 400x240 Sharp Memory Display
-import adafruit_sharpmemorydisplay
+# 400x240 Sharp Memory disp
+import adafruit_sharpmemorydisp
 spi = busio.SPI(board.SCK, MOSI=board.MOSI)
 scs = digitalio.DigitalInOut(board.D6)
-disp = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
+disp = adafruit_sharpmemorydisp.SharpMemorydisp(spi, scs, 400, 240)
 print("Filling white")
 disp.fill(1)
 disp.show()
@@ -52,7 +52,7 @@ x = 0
 
 #The version of the string that is saved to file
 outputstring = ""
-#The version of the string that is displayed
+#The version of the string that is disped
 copy_of_output = ""
 black = "black"
 white = "white"
@@ -74,7 +74,7 @@ line_height = 35
 
 def main(stdscr):
     #stdscr.nodelay(True)
-    print("Display output: " + copy_of_output + "\n")
+    print("disp output: " + copy_of_output + "\n")
     print("Saved output: " + outputstring + "\n")
     return stdscr.getch()
 
@@ -83,34 +83,51 @@ def fontchooser():
 
 def linewriter(copy_of_output,string_adj_len):
   
-    if string_adj_len <= first_line:
-        draw.text((x, top+0), copy_of_output, font=font, fill=black)
-    elif string_adj_len <= second_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=black)
-    elif string_adj_len <= third_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:], font=font, fill=black)
-    # Changes distance from top to prevent last line from going off of screen
-    elif string_adj_len <= fourth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:], font=font, fill=black)
-    elif string_adj_len <= fifth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:], font=font, fill=black)
-    elif string_adj_len <= sixth_line:
-        draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
-        draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:fifth_line], font=font, fill=black)
-        draw.text((x, top+(line_height)*5), copy_of_output[fifth_line:], font=font, fill=black)
+    # if string_adj_len <= first_line:
+    #     draw.text((x, top+0), copy_of_output, font=font, fill=black)
+    # elif string_adj_len <= second_line:
+    #     draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)), copy_of_output[first_line:], font=font, fill=black)
+    # elif string_adj_len <= third_line:
+    #     draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*2), copy_of_output[second_line:], font=font, fill=black)
+    # # Changes distance from top to prevent last line from going off of screen
+    # elif string_adj_len <= fourth_line:
+    #     draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*3), copy_of_output[third_line:], font=font, fill=black)
+    # elif string_adj_len <= fifth_line:
+    #     draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:], font=font, fill=black)
+    # elif string_adj_len <= sixth_line:
+    #     draw.text((x, top+0), copy_of_output[:first_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)), copy_of_output[first_line:second_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*2), copy_of_output[second_line:third_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*3), copy_of_output[third_line:fourth_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*4), copy_of_output[fourth_line:fifth_line], font=font, fill=black)
+    #     draw.text((x, top+(line_height)*5), copy_of_output[fifth_line:], font=font, fill=black)
+
+    disp.fill(1)
+    disp.text(" hello world!", 0, 0, 0)
+    disp.text(" This is the", 0, 8, 0)
+    disp.text(" CircuitPython", 0, 16, 0)
+    disp.text("adafruit library", 0, 24, 0)
+    disp.text(" for the SHARP", 0, 32, 0)
+    disp.text(" Memory disp :) ", 0, 40, 0)
+    disp.show()
+    disp.fill(1)
+    disp.text("this is testing the refresh!", 0, 0, 0)
+    disp.text("REFRESH", 0, 8, 0)
+    disp.text("REFRESH", 0, 16, 0)
+    disp.text("REFRESH", 0, 24, 0)
+    disp.text("REFRESH", 0, 32, 0)
+    disp.text("REFRESH", 0, 40, 0)
+    disp.show()
 
 while True:
     # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
