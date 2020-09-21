@@ -144,7 +144,7 @@ while True:
             copy_of_output = copy_of_output + " "
             print (i)
             i += 1
-    elif (keypress <= 255):
+    elif (keypress <= 255 and keypress >= 0):
         outputstring = outputstring + chr(keypress)
         copy_of_output = copy_of_output + chr(keypress)
     elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
