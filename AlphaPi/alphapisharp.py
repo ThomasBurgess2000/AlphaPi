@@ -15,7 +15,7 @@ import adafruit_sharpmemorydisplay
 spi = busio.SPI(board.SCK, MOSI=board.MOSI)
 scs = digitalio.DigitalInOut(board.D6)
 disp = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
-disp.fill(1)
+disp.fill()
 disp.show()
 FONTSIZE = 42
 #font = ImageFont.truetype("usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
