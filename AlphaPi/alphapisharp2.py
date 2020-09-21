@@ -17,7 +17,7 @@ scs = digitalio.DigitalInOut(board.D6)
 disp = adafruit_sharpmemorydisplay.SharpMemoryDisplay(spi, scs, 400, 240)
 disp.fill(1)
 disp.show()
-FONTSIZE = 10
+FONTSIZE = 5
 #font = ImageFont.truetype("usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", FONTSIZE)
 font = ImageFont.truetype("RobotoMono.ttf", FONTSIZE)
 
