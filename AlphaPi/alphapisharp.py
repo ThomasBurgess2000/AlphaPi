@@ -11,7 +11,7 @@ import curses
 
 
 # 400x240 Sharp Memory disp
-import adafruit_sharpmemorydisp
+import adafruit_sharpmemorydisplay
 spi = busio.SPI(board.SCK, MOSI=board.MOSI)
 scs = digitalio.DigitalInOut(board.D6)
 disp = adafruit_sharpmemorydisp.SharpMemorydisplay(spi, scs, 400, 240)
