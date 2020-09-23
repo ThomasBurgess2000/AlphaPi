@@ -1,6 +1,6 @@
-# oled_bonnet
+# AlphaPi
 
-These are Python scripts that are meant to be used with the Adafruit 2.23" Monochrome OLED Bonnet (https://learn.adafruit.com/adafruit-2-23-monochrome-oled-bonnet/overview) although the alphapi.py script should also work with the 400x240 Sharp Memory Display from Adafruit.
+These are Python scripts that are meant to be used with the Adafruit 2.23" Monochrome OLED Bonnet (https://learn.adafruit.com/adafruit-2-23-monochrome-oled-bonnet/overview) although scripts with "sharp" in the name are meant to work with the 400x240 Sharp Memory Display from Adafruit.
 
 ## alphapi.py
 alphapi.py is a basic text-entry script built using the curses module. Updates the screen with characters typed. Inspired by the Alphasmart.
