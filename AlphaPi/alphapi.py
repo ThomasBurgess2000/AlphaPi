@@ -49,13 +49,11 @@ outputstring = ""
 copy_of_output = ""
 black = "black"
 white = "white"
-#FUNCTIONS
+
 
 modifier = 0
-every_21 = 0
 
-location_x = 0
-
+#FUNCTIONS
 
 def main(stdscr):
     # stdscr.nodelay(True)
@@ -85,6 +83,10 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
 def wordprocessor_main():
+    global outputstring
+    global copy_of_output
+    global modifier
+    
     while True:
         # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
         keypress = curses.wrapper(main)
