@@ -62,7 +62,6 @@ def main(stdscr):
     # print("Display output: " + copy_of_output + "\n")
     # print("Saved output: " + outputstring + "\n")
     character = stdscr.getch()
-    curses.flushinp()
     return character
 
 def fontchooser():
@@ -95,9 +94,6 @@ def wordprocessor_menu():
         draw.text((x, top+0), "1. Create new file", font=font, fill=white)
         draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
         draw.text((x, top+16), "3. Help", font=font, fill=white)
-        
-        disp.image(image)
-        disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             done = False
@@ -108,8 +104,6 @@ def wordprocessor_menu():
                 draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
                 draw.text((x, top+8), filename[:21], font=font, fill=white)
                 draw.text((x, top+16), filename[21:], font=font, fill=white)
-                disp.image(image)
-                disp.show()
                 if (keypress == escape):
                     return
                 elif (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
@@ -119,6 +113,8 @@ def wordprocessor_menu():
                 # Make sure it's a legal file character
                 elif ((keypress >= 0 and keypress <= 57) or (keypress >= 65 and keypress <= 90) or (keypress >= 97 and keypress <= 122) or (keypress == 95)):
                     filename = filename + chr(keypress)
+                disp.image(image)
+                disp.show()
             wordprocessor_edit(filename)
                 
         elif(keypress == 50):
@@ -137,6 +133,8 @@ def wordprocessor_menu():
             disp.image(image)
             disp.show()
             quit = True
+        disp.image(image)
+        disp.show()
             
 def wordprocessor_edit(filename):
     global outputstring
