@@ -58,7 +58,7 @@ modifier = 0
 #FUNCTIONS
 
 def main(stdscr):
-    # stdscr.nodelay(True)
+    stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
     # print("Saved output: " + outputstring + "\n")
     return stdscr.getch()
@@ -112,6 +112,8 @@ def wordprocessor_menu():
                     return
                 elif (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
                     done = True
+                elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
+                    filename = filename[:-1]
                 # Make sure it's a legal file character
                 elif ((keypress >= 0 and keypress <= 57) or (keypress >= 65 and keypress <= 90) or (keypress >= 97 and keypress <= 122) or (keypress == 95)):
                     filename = filename + chr(keypress)
