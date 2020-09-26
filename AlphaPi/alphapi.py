@@ -54,7 +54,6 @@ white = "white"
 escape = 27
 
 modifier = 0
-global keypress
 
 #FUNCTIONS
 
@@ -68,7 +67,6 @@ def fontchooser():
     return ("Nothing")
 
 def linewriter(copy_of_output,string_adj_len):
-  
     if string_adj_len <= 21:
         draw.text((x, top+0), copy_of_output, font=font, fill=white)
     elif string_adj_len <= 42:
@@ -86,17 +84,17 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
 def wordprocessor_menu():
-    global keypress
+    
     # Menu
     quit=False
     curses.nocbreak()
+    draw.rectangle((0,0,width,height),outline=0,fill=black)
+    draw.text((x, top+0), "1. Create new file", font=font, fill=white)
+    draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
+    draw.text((x, top+16), "3. Help", font=font, fill=white)
+    disp.image(image)
+    disp.show()
     while quit==False:
-        draw.rectangle((0,0,width,height),outline=0,fill=black)
-        draw.text((x, top+0), "1. Create new file", font=font, fill=white)
-        draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
-        draw.text((x, top+16), "3. Help", font=font, fill=white)
-        disp.image(image)
-        disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             done = False
@@ -142,7 +140,6 @@ def wordprocessor_edit(filename):
     global outputstring
     global copy_of_output
     global modifier
-    global keypress
     while True:
         # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
         keypress = curses.wrapper(main)
@@ -177,16 +174,15 @@ def wordprocessor_edit(filename):
         disp.show()
         
 def main_menu():
-    global keypress
     quit = False
+    draw.rectangle((0,0,width,height),outline=0,fill=black)
+    draw.text((x, top+0), "1. Word Processor", font=font, fill=white)
+    draw.text((x, top+8), "2. Backup Files", font=font, fill=white)
+    draw.text((x, top+16), "3. Quit", font=font, fill=white)
+    
+    disp.image(image)
+    disp.show()
     while quit==False:
-        draw.rectangle((0,0,width,height),outline=0,fill=black)
-        draw.text((x, top+0), "1. Word Processor", font=font, fill=white)
-        draw.text((x, top+8), "2. Backup Files", font=font, fill=white)
-        draw.text((x, top+16), "3. Quit", font=font, fill=white)
-        
-        disp.image(image)
-        disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             wordprocessor_menu()
