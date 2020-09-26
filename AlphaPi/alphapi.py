@@ -58,9 +58,9 @@ location_x = 0
 
 
 def main(stdscr):
-    #stdscr.nodelay(True)
-    print("Display output: " + copy_of_output + "\n")
-    print("Saved output: " + outputstring + "\n")
+    # stdscr.nodelay(True)
+    # print("Display output: " + copy_of_output + "\n")
+    # print("Saved output: " + outputstring + "\n")
     return stdscr.getch()
 
 def fontchooser():
@@ -84,32 +84,51 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
-while True:
-    # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
-    keypress = curses.wrapper(main)
-    #print ("key:", keypress)
-    if (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
-        outputstring = outputstring + "\n"
-        if len(copy_of_output) <= 21:
-            modifier = 21 - len(copy_of_output)
-        else:
-            modifier = 21- (len(copy_of_output)%21)
-        i = 0
-        while i < modifier:
-            copy_of_output = copy_of_output + " "
-            print (i)
-            i += 1
-    elif (keypress <= 255):
-        outputstring = outputstring + chr(keypress)
-        copy_of_output = copy_of_output + chr(keypress)
-    elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
-        outputstring = outputstring[:-1]
-        copy_of_output = copy_of_output[:-1]
-        if ((len(copy_of_output)//20) - (len(copy_of_output) % 20)) == 1:
-            copy_of_output = copy_of_output.rstrip()
-    draw.rectangle((0,0,width,height),outline=0,fill=black)
-    if (len(copy_of_output)>84):
-        copy_of_output = copy_of_output[21:]
-    linewriter(copy_of_output,len(copy_of_output))
-    disp.image(image)
-    disp.show()
+def wordprocessor_main():
+    while True:
+        # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
+        keypress = curses.wrapper(main)
+        #print ("key:", keypress)
+        if (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
+            outputstring = outputstring + "\n"
+            if len(copy_of_output) <= 21:
+                modifier = 21 - len(copy_of_output)
+            else:
+                modifier = 21- (len(copy_of_output)%21)
+            i = 0
+            while i < modifier:
+                copy_of_output = copy_of_output + " "
+                print (i)
+                i += 1
+        elif (keypress <= 31):
+            if (keypress == 27):
+                return
+        elif (keypress <= 255):
+            outputstring = outputstring + chr(keypress)
+            copy_of_output = copy_of_output + chr(keypress)
+        elif (keypress == 256 or keypress == curses.KEY_BACKSPACE):
+            outputstring = outputstring[:-1]
+            copy_of_output = copy_of_output[:-1]
+            if ((len(copy_of_output)//20) - (len(copy_of_output) % 20)) == 1:
+                copy_of_output = copy_of_output.rstrip()
+        draw.rectangle((0,0,width,height),outline=0,fill=black)
+        if (len(copy_of_output)>84):
+            copy_of_output = copy_of_output[21:]
+        linewriter(copy_of_output,len(copy_of_output))
+        disp.image(image)
+        disp.show()
+        
+def main_menu():
+    quit = False
+    while quit==False:
+        draw.text((x, top+0), "1. Word Processor", font=font, fill=white)
+        draw.text((x, top+8), "2. Backup Files", font=font, fill=white)
+        draw.text((x, top+16), "3. Quit", font=font, fill=white)
+        keypress = curses.wrapper(main)
+        if (keypress == 49):
+            wordprocessor_main()
+        elif(keypress == 50):
+            backup_files()
+        elif(keypress == 51):
+            quit == True
+    sys.exit(0)
