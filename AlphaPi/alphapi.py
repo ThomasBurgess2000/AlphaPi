@@ -54,7 +54,7 @@ white = "white"
 escape = 27
 
 modifier = 0
-keypress 
+global keypress
 
 #FUNCTIONS
 
