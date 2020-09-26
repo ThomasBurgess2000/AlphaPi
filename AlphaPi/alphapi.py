@@ -25,7 +25,7 @@ image = Image.open(r'piskel.png')
 image = image.convert('1')
 disp.image(image)
 disp.show()
-time.sleep(3)
+time.sleep(2)
 
 image = Image.new('1', (width, height))
  
@@ -61,7 +61,9 @@ def main(stdscr):
     # stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
     # print("Saved output: " + outputstring + "\n")
-    return stdscr.getch()
+    character = stdscr.getch()
+    curses.flushinp()
+    return character
 
 def fontchooser():
     return ("Nothing")
@@ -88,7 +90,6 @@ def wordprocessor_menu():
     
     # Menu
     quit=False
-    curses.flushinp()
     while quit==False:
         draw.rectangle((0,0,width,height),outline=0,fill=black)
         draw.text((x, top+0), "1. Create new file", font=font, fill=white)
@@ -102,7 +103,6 @@ def wordprocessor_menu():
             done = False
             filename = ""
             while done == False:
-                curses.flushinp()
                 keypress = curses.wrapper(main)
                 draw.rectangle((0,0,width,height),outline=0,fill=black)
                 draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
@@ -125,7 +125,6 @@ def wordprocessor_menu():
             return
         elif(keypress == 51):
             while (keypress != escape):
-                curses.flushinp()
                 keypress = curses.wrapper(main)
                 draw.rectangle((0,0,width,height),outline=0,fill=black)
                 draw.text((x, top+0), "Ctrl + S to save", font=font, fill=white)
