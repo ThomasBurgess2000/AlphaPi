@@ -96,6 +96,7 @@ def wordprocessor_menu():
     disp.show()
     while quit==False:
         keypress = curses.wrapper(main)
+        print (keypress)
         if (keypress == 49):
             done = False
             filename = ""
