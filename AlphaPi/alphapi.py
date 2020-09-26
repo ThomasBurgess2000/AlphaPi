@@ -118,7 +118,7 @@ def wordprocessor_menu():
             wordprocessor_edit(filename)
                 
         elif(keypress == 50):
-            
+            return
         elif(keypress == 51):
             while (keypress != escape):
                 keypress = curses.wrapper(main)
