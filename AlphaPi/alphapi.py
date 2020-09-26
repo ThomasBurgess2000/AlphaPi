@@ -135,6 +135,9 @@ def main_menu():
         elif(keypress == 50):
             backup_files()
         elif(keypress == 51):
+            draw.rectangle((0,0,width,height),outline=0,fill=black)
+            disp.image(image)
+            disp.show()
             quit == True
     sys.exit(0)
 
