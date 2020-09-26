@@ -58,7 +58,7 @@ modifier = 0
 #FUNCTIONS
 
 def main(stdscr):
-    stdscr.nodelay(True)
+    # stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
     # print("Saved output: " + outputstring + "\n")
     return stdscr.getch()
@@ -88,6 +88,7 @@ def wordprocessor_menu():
     
     # Menu
     quit=False
+    curses.flushinp()
     while quit==False:
         draw.rectangle((0,0,width,height),outline=0,fill=black)
         draw.text((x, top+0), "1. Create new file", font=font, fill=white)
@@ -96,7 +97,6 @@ def wordprocessor_menu():
         
         disp.image(image)
         disp.show()
-        curses.flushinp()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             done = False
