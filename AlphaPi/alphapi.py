@@ -138,7 +138,7 @@ def main_menu():
             draw.rectangle((0,0,width,height),outline=0,fill=black)
             disp.image(image)
             disp.show()
-            quit == True
+            quit = True
     sys.exit(0)
 
 # Start
