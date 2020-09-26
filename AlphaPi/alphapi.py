@@ -121,9 +121,12 @@ def wordprocessor_main():
 def main_menu():
     quit = False
     while quit==False:
+        draw.rectangle((0,0,width,height),outline=0,fill=black)
         draw.text((x, top+0), "1. Word Processor", font=font, fill=white)
         draw.text((x, top+8), "2. Backup Files", font=font, fill=white)
         draw.text((x, top+16), "3. Quit", font=font, fill=white)
+        disp.image(image)
+        disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             wordprocessor_main()
@@ -132,3 +135,6 @@ def main_menu():
         elif(keypress == 51):
             quit == True
     sys.exit(0)
+
+# Start
+main_menu()
