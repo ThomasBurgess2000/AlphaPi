@@ -61,14 +61,6 @@ global keypress
 def main(stdscr):
     # stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
-    try:
-        print("Saved output: " + outputstring + "\n")
-    except:
-        pass
-    try:
-        print("Filename: " + filename + "\n")
-    except:
-        pass
     character = stdscr.getch()
     return character
 
@@ -103,6 +95,8 @@ def wordprocessor_menu():
         draw.text((x, top+0), "1. Create new file", font=font, fill=white)
         draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
         draw.text((x, top+16), "3. Help", font=font, fill=white)
+        disp.image(image)
+        disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             done = False
@@ -143,8 +137,6 @@ def wordprocessor_menu():
             disp.image(image)
             disp.show()
             quit = True
-        disp.image(image)
-        disp.show()
             
 def wordprocessor_edit(filename):
     global outputstring
