@@ -9,6 +9,7 @@ import keyboard
 import string
 import curses
 import sys
+from os import listdir
 
 oled_reset = digitalio.DigitalInOut(D4)
 i2c = busio.I2C(SCL, SDA)
@@ -50,7 +51,7 @@ outputstring = ""
 copy_of_output = ""
 black = "black"
 white = "white"
-
+escape = 27
 
 modifier = 0
 
@@ -83,7 +84,57 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+14), copy_of_output[42:63], font=font, fill=white)
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
-def wordprocessor_main():
+def wordprocessor_menu():
+    
+    # Menu
+    
+    while quit==False:
+        draw.rectangle((0,0,width,height),outline=0,fill=black)
+        draw.text((x, top+0), "1. Create new file", font=font, fill=white)
+        draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
+        draw.text((x, top+16), "3. Help", font=font, fill=white)
+        
+        disp.image(image)
+        disp.show()
+        keypress = curses.wrapper(main)
+        if (keypress == 49):
+            done = False
+            filename = ""
+            while done == False:
+                keypress = curses.wrapper(main)
+                draw.rectangle((0,0,width,height),outline=0,fill=black)
+                draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
+                draw.text((x, top+8), filename[:21], font=font, fill=white)
+                draw.text((x, top+16), filename[21:], font=font, fill=white)
+                disp.image(image)
+                disp.show()
+                if (keypress == escape):
+                    return
+                elif (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
+                    done = True
+                # Make sure it's a legal file character
+                elif ((keypress >= 0 and keypress <= 57) or (keypress >= 65 and keypress <= 90) or (keypress >= 97 and keypress <= 122) or (keypress == 95)):
+                    filename = filename + chr(keypress)
+            wordprocessor_edit(filename)
+                
+        elif(keypress == 50):
+            
+        elif(keypress == 51):
+            while (keypress != escape):
+                keypress = curses.wrapper(main)
+                draw.rectangle((0,0,width,height),outline=0,fill=black)
+                draw.text((x, top+0), "Ctrl + S to save", font=font, fill=white)
+                draw.text((x, top+8), "'Esc' to go back", font=font, fill=white)
+                draw.text((x, top+16), "Ex file: test.txt", font=font, fill=white)
+                disp.image(image)
+                disp.show()
+        elif(keypress==escape):
+            draw.rectangle((0,0,width,height),outline=0,fill=black)
+            disp.image(image)
+            disp.show()
+            quit = True
+            
+def wordprocessor_edit(filename):
     global outputstring
     global copy_of_output
     global modifier
@@ -104,7 +155,7 @@ def wordprocessor_main():
                 print (i)
                 i += 1
         elif (keypress <= 31):
-            if (keypress == 27):
+            if (keypress == escape):
                 return
         elif (keypress <= 255):
             outputstring = outputstring + chr(keypress)
@@ -128,14 +179,15 @@ def main_menu():
         draw.text((x, top+0), "1. Word Processor", font=font, fill=white)
         draw.text((x, top+8), "2. Backup Files", font=font, fill=white)
         draw.text((x, top+16), "3. Quit", font=font, fill=white)
+        
         disp.image(image)
         disp.show()
         keypress = curses.wrapper(main)
         if (keypress == 49):
-            wordprocessor_main()
+            wordprocessor_menu()
         elif(keypress == 50):
             backup_files()
-        elif(keypress == 51):
+        elif(keypress == 51 or keypress == escape):
             draw.rectangle((0,0,width,height),outline=0,fill=black)
             disp.image(image)
             disp.show()
