@@ -54,6 +54,7 @@ white = "white"
 escape = 27
 
 modifier = 0
+keypress 
 
 #FUNCTIONS
 
@@ -86,7 +87,7 @@ def linewriter(copy_of_output,string_adj_len):
         draw.text((x, top+23), copy_of_output[63:], font=font, fill=white)
 
 def wordprocessor_menu():
-    
+    global keypress
     # Menu
     quit=False
     while quit==False:
@@ -100,10 +101,6 @@ def wordprocessor_menu():
             filename = ""
             while done == False:
                 keypress = curses.wrapper(main)
-                draw.rectangle((0,0,width,height),outline=0,fill=black)
-                draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
-                draw.text((x, top+8), filename[:21], font=font, fill=white)
-                draw.text((x, top+16), filename[21:], font=font, fill=white)
                 if (keypress == escape):
                     return
                 elif (keypress == curses.KEY_ENTER or keypress == 10 or keypress == 13):
@@ -113,6 +110,10 @@ def wordprocessor_menu():
                 # Make sure it's a legal file character
                 elif ((keypress >= 0 and keypress <= 57) or (keypress >= 65 and keypress <= 90) or (keypress >= 97 and keypress <= 122) or (keypress == 95)):
                     filename = filename + chr(keypress)
+                draw.rectangle((0,0,width,height),outline=0,fill=black)
+                draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
+                draw.text((x, top+8), filename[:21], font=font, fill=white)
+                draw.text((x, top+16), filename[21:], font=font, fill=white)
                 disp.image(image)
                 disp.show()
             wordprocessor_edit(filename)
@@ -140,7 +141,7 @@ def wordprocessor_edit(filename):
     global outputstring
     global copy_of_output
     global modifier
-    
+    global keypress
     while True:
         # This is the section that logs keypresses for the whole running of the program...might need to move it to a separate section though if line_writer becomes its own "app"
         keypress = curses.wrapper(main)
@@ -175,6 +176,7 @@ def wordprocessor_edit(filename):
         disp.show()
         
 def main_menu():
+    global keypress
     quit = False
     while quit==False:
         draw.rectangle((0,0,width,height),outline=0,fill=black)
