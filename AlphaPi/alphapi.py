@@ -96,11 +96,13 @@ def wordprocessor_menu():
         
         disp.image(image)
         disp.show()
+        curses.flushinp()
         keypress = curses.wrapper(main)
         if (keypress == 49):
             done = False
             filename = ""
             while done == False:
+                curses.flushinp()
                 keypress = curses.wrapper(main)
                 draw.rectangle((0,0,width,height),outline=0,fill=black)
                 draw.text((x, top+0), "Enter the file name:", font=font, fill=white)
@@ -123,6 +125,7 @@ def wordprocessor_menu():
             return
         elif(keypress == 51):
             while (keypress != escape):
+                curses.flushinp()
                 keypress = curses.wrapper(main)
                 draw.rectangle((0,0,width,height),outline=0,fill=black)
                 draw.text((x, top+0), "Ctrl + S to save", font=font, fill=white)
