@@ -61,7 +61,14 @@ keypress
 def main(stdscr):
     # stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
-    # print("Saved output: " + outputstring + "\n")
+    try:
+        print("Saved output: " + outputstring + "\n")
+    except:
+        pass
+    try:
+        print("Filename: " + filename + "\n")
+    except:
+        pass
     character = stdscr.getch()
     return character
 
@@ -90,6 +97,7 @@ def wordprocessor_menu():
     global keypress
     # Menu
     quit=False
+    curses.nocbreak()
     while quit==False:
         draw.rectangle((0,0,width,height),outline=0,fill=black)
         draw.text((x, top+0), "1. Create new file", font=font, fill=white)
@@ -99,6 +107,7 @@ def wordprocessor_menu():
         if (keypress == 49):
             done = False
             filename = ""
+            curses.nocbreak()
             while done == False:
                 keypress = curses.wrapper(main)
                 if (keypress == escape):
