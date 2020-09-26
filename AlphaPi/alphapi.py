@@ -61,7 +61,6 @@ global keypress
 def main(stdscr):
     # stdscr.nodelay(True)
     # print("Display output: " + copy_of_output + "\n")
-    curses.flushinp()
     character = stdscr.getch()
     return character
 
