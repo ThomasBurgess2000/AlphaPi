@@ -87,7 +87,7 @@ def wordprocessor_menu():
     
     # Menu
     quit=False
-    curses.nocbreak()
+
     draw.rectangle((0,0,width,height),outline=0,fill=black)
     draw.text((x, top+0), "1. Create new file", font=font, fill=white)
     draw.text((x, top+8), "2. Edit existing file", font=font, fill=white)
@@ -100,7 +100,7 @@ def wordprocessor_menu():
         if (keypress == 49):
             done = False
             filename = ""
-            curses.nocbreak()
+
             while done == False:
                 keypress = curses.wrapper(main)
                 if (keypress == escape):
