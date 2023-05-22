@@ -72,12 +72,12 @@ def wrap_text(text, width):
         if len(line + ' ' + word) <= width:
             line += ' ' + word
         else:
-            lines.append(line)
+            lines.append(line.strip())  # Strip leading and trailing spaces
             line = word
 
     # Add any leftover text
     if line != '':
-        lines.append(line)
+        lines.append(line.strip())  # Strip leading and trailing spaces
 
     return lines
 
@@ -99,13 +99,16 @@ def terminal(stdscr):
                 resp = get_completion(input_str)
 
                 # Add response to history, with line wrapping
-                for line in wrap_text("A> " + resp, 20):
+                for line in wrap_text("A>" + resp, 20):
                     history.append(line)
 
                 input_str = ""
-                max_scroll = len(history) - 4 if len(history) > 4 else 0
+                # Reduced by one for less lines
+                max_scroll = len(history) - 3 if len(history) > 3 else 0
                 scroll = max_scroll
-
+            else:
+                if len(history) > 0:
+                    history.pop()
         # BACKSPACE
         elif c == 8 or c == 127:
             input_str = input_str[:-1]
