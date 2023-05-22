@@ -36,10 +36,14 @@ max_scroll = 0
 # Function for ChatGPT API
 
 
-def ask_gpt3(question):
-    response = openai.Completion.create(
-        engine="text-davinci-002", prompt=question, max_tokens=150)
-    return response.choices[0].text.strip()
+def get_completion(prompt, model="gpt-3.5-turbo"):
+    messages = [{"role": "user", "content": prompt}]
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=0,
+    )
+    return response.choices[0].message["content"]
 
 
 def draw_text():
@@ -72,7 +76,7 @@ def terminal(stdscr):
         if c == 10:
             if input_str.strip() != "":
                 history.append(input_str)
-                resp = ask_gpt3(input_str)
+                resp = get_completion(input_str)
                 history.append("A> " + resp)
                 input_str = ""
                 max_scroll = len(history) - 4 if len(history) > 4 else 0
