@@ -62,6 +62,26 @@ def draw_text():
     disp.show()
 
 
+def wrap_text(text, width):
+    # Split the text by spaces to get words
+    words = text.split(' ')
+    lines = []
+    line = ''
+
+    for word in words:
+        if len(line + ' ' + word) <= width:
+            line += ' ' + word
+        else:
+            lines.append(line)
+            line = word
+
+    # Add any leftover text
+    if line != '':
+        lines.append(line)
+
+    return lines
+
+
 def terminal(stdscr):
     global history
     global scroll
@@ -76,12 +96,16 @@ def terminal(stdscr):
         # ENTER
         if c == 10:
             if input_str.strip() != "":
-                history.append(">" + input_str)
                 resp = get_completion(input_str)
-                history.append("A> " + resp)
+
+                # Add response to history, with line wrapping
+                for line in wrap_text("A> " + resp, 20):
+                    history.append(line)
+
                 input_str = ""
                 max_scroll = len(history) - 4 if len(history) > 4 else 0
                 scroll = max_scroll
+
         # BACKSPACE
         elif c == 8 or c == 127:
             input_str = input_str[:-1]
