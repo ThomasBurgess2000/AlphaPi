@@ -88,6 +88,7 @@ def terminal(stdscr):
     global max_scroll
 
     input_str = ""
+    input_lines = 0
     draw_text()
 
     while True:
@@ -103,14 +104,12 @@ def terminal(stdscr):
                     history.append(line)
 
                 input_str = ""
+                input_lines = 0
                 # Reduced by one for less lines
                 max_scroll = len(history) - 3 if len(history) > 3 else 0
                 scroll = max_scroll
-            else:
-                if len(history) > 0:
-                    history.pop()
         # BACKSPACE
-        elif c == 256 or c == curses.KEY_BACKSPACE:
+        elif c == 8 or c == 127:
             input_str = input_str[:-1]
         # UP ARROW
         elif c == 259:
@@ -124,12 +123,15 @@ def terminal(stdscr):
             if 32 <= c <= 126:  # Check if c is a printable ASCII character
                 input_str += chr(c)
 
-        # Ensure there are enough lines for the user input
-        while len(history) > 0 and history[-1][0] == ">":
-            history.pop()
+        # Remove the old input lines from the history
+        for _ in range(input_lines):
+            if len(history) > 0:
+                history.pop()
 
         # Add user input to history, with line wrapping
-        for line in wrap_text(">" + input_str, 20):
+        wrapped_input = list(wrap_text(">" + input_str, 20))
+        input_lines = len(wrapped_input)
+        for line in wrapped_input:
             history.append(line)
 
         draw_text()
