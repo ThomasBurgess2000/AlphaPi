@@ -110,7 +110,7 @@ def terminal(stdscr):
                 if len(history) > 0:
                     history.pop()
         # BACKSPACE
-        elif c == 8 or c == 127:
+        elif c == 256 or c == curses.KEY_BACKSPACE:
             input_str = input_str[:-1]
         # UP ARROW
         elif c == 259:
