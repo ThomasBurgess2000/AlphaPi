@@ -96,6 +96,10 @@ def terminal(stdscr):
         # ENTER
         if c == 10:
             if input_str.strip() != "":
+                # Add input to history, with line wrapping
+                for line in wrap_text(">" + input_str, 20):
+                    history.append(line)
+
                 resp = get_completion(input_str)
 
                 # Add response to history, with line wrapping
@@ -121,7 +125,8 @@ def terminal(stdscr):
             if scroll < max_scroll:
                 scroll += 1
         else:
-            input_str += chr(c)
+            if 32 <= c <= 126:  # Check if c is a printable ASCII character
+                input_str += chr(c)
 
         if len(history) == 0 or history[-1][0] != '>':
             history.append(">")
