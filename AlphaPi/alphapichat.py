@@ -43,6 +43,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
         messages=messages,
         temperature=0,
     )
+    print(response.choices[0].message["content"])
     return response.choices[0].message["content"]
 
 
@@ -75,7 +76,7 @@ def terminal(stdscr):
         # ENTER
         if c == 10:
             if input_str.strip() != "":
-                history.append(input_str)
+                history.append(">" + input_str)
                 resp = get_completion(input_str)
                 history.append("A> " + resp)
                 input_str = ""
@@ -95,6 +96,8 @@ def terminal(stdscr):
         else:
             input_str += chr(c)
 
+        if len(history) == 0 or history[-1][0] != '>':
+            history.append(">")
         history[-1] = ">" + input_str
         draw_text()
 
