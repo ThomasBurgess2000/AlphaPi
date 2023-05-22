@@ -112,7 +112,7 @@ def terminal(stdscr):
                 max_scroll = len(history) - 3 if len(history) > 3 else 0
                 scroll = response_start
         # BACKSPACE
-        elif c == 8 or c == 127:
+        elif c == 256 or c == curses.KEY_BACKSPACE:
             input_str = input_str[:-1]
         # UP ARROW
         elif c == 259:
@@ -133,6 +133,9 @@ def terminal(stdscr):
 
         # Add user input to history, with line wrapping
         if input_str.strip() != "":
+            # check if the only character in history is >
+            if len(history) == 1 and history[0] == ">":
+                history.pop()
             wrapped_input = list(wrap_text(">" + input_str, 20))
             input_lines = len(wrapped_input)
             for line in wrapped_input:
