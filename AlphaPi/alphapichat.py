@@ -110,7 +110,9 @@ def terminal(stdscr):
                 input_lines = 0
                 # Reduced by one for less lines
                 max_scroll = len(history) - 3 if len(history) > 3 else 0
-                scroll = response_start
+
+                # Point scroll to the start of the response
+                scroll = response_start if response_start <= max_scroll else max_scroll
         # BACKSPACE
         elif c == 256 or c == curses.KEY_BACKSPACE:
             input_str = input_str[:-1]
