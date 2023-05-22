@@ -26,7 +26,7 @@ font = ImageFont.load_default()
 openai.api_key = 'your-api-key'
 
 # deque with maxlen will automatically remove old items when the limit is reached
-history = deque(maxlen=10)
+history = deque(maxlen=2000)
 history.append(">")
 
 # Scrolling variables
@@ -99,6 +99,9 @@ def terminal(stdscr):
             if input_str.strip() != "":
                 resp = get_completion(input_str)
 
+                # Note the start of the response
+                response_start = len(history) - input_lines
+
                 # Add response to history, with line wrapping
                 for line in wrap_text("A>" + resp, 20):
                     history.append(line)
@@ -107,7 +110,7 @@ def terminal(stdscr):
                 input_lines = 0
                 # Reduced by one for less lines
                 max_scroll = len(history) - 3 if len(history) > 3 else 0
-                scroll = max_scroll
+                scroll = response_start
         # BACKSPACE
         elif c == 8 or c == 127:
             input_str = input_str[:-1]
@@ -129,10 +132,11 @@ def terminal(stdscr):
                 history.pop()
 
         # Add user input to history, with line wrapping
-        wrapped_input = list(wrap_text(">" + input_str, 20))
-        input_lines = len(wrapped_input)
-        for line in wrapped_input:
-            history.append(line)
+        if input_str.strip() != "":
+            wrapped_input = list(wrap_text(">" + input_str, 20))
+            input_lines = len(wrapped_input)
+            for line in wrapped_input:
+                history.append(line)
 
         draw_text()
 
