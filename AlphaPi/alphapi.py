@@ -16,7 +16,7 @@ import adafruit_ssd1305
 OLED_WIDTH = 128
 OLED_HEIGHT = 32
 SPLASH_IMAGE_PATH = 'piskel.png'
-FONT_PATH = 'minecraftia.ttf'  # Ensure this font exists or use default
+FONT_PATH = 'Unibody8Pro-Regular.ttf'  # Ensure this font exists or use default
 FONT_SIZE = 8
 MAX_FILENAME_LENGTH = 42  # Allow two lines of filename display
 MAX_DISPLAY_LINES = 3      # Number of lines visible on OLED
@@ -60,7 +60,7 @@ def display_image():
     disp.image(image)
     disp.show()
 
-def clear_display():
+def clear_image():
     """Clear the OLED display."""
     draw.rectangle((0, 0, OLED_WIDTH, OLED_HEIGHT), outline=BLACK, fill=BLACK)
 
@@ -74,8 +74,28 @@ def show_splash_screen():
         time.sleep(2)
     except Exception as e:
         # If splash image not found, just clear the display
-        clear_display()
+        clear_image()
         display_image()
+
+def wrap_text(text, max_chars_per_line=21):
+    """
+    Wraps the input text into lines based on the maximum characters per line.
+    """
+    raw_lines = text.split('\n')
+    lines = []
+    
+    for raw_line in raw_lines:
+        while len(raw_line) > max_chars_per_line:
+            # Attempt to wrap at the last space within max_chars_per_line
+            wrap_at = raw_line.rfind(' ', 0, max_chars_per_line)
+            if wrap_at == -1:
+                wrap_at = max_chars_per_line
+            lines.append(raw_line[:wrap_at])
+            raw_line = raw_line[wrap_at:].lstrip()
+        lines.append(raw_line)
+    
+    return lines
+
 
 def line_writer(text, scroll_offset=0):
     """
@@ -90,34 +110,22 @@ def line_writer(text, scroll_offset=0):
     if text == line_writer.previous_text and scroll_offset == line_writer.previous_scroll:
         return  # No change, no need to update
 
-    clear_display()
+    clear_image()
 
-    # Split the text into lines based on '\n'
-    raw_lines = text.split('\n')
-    lines = []
-    max_chars_per_line = 21  # Adjust based on font size and OLED width
-
-    for raw_line in raw_lines:
-        # Handle word wrapping for each line
-        while len(raw_line) > max_chars_per_line:
-            # Attempt to wrap at the last space within max_chars_per_line
-            wrap_at = raw_line.rfind(' ', 0, max_chars_per_line)
-            if wrap_at == -1:
-                wrap_at = max_chars_per_line
-            lines.append(raw_line[:wrap_at])
-            raw_line = raw_line[wrap_at:].lstrip()
-        lines.append(raw_line)
+    # Use the wrap_text function to get wrapped lines
+    lines = wrap_text(text)
 
     # Apply scroll offset
     display_lines = lines[scroll_offset:scroll_offset + MAX_DISPLAY_LINES]
 
     for idx, line in enumerate(display_lines):
-        y = idx * (FONT_SIZE + 2)
+        y = idx * (FONT_SIZE + 2)  # Adjust spacing as needed
         draw.text((0, y), line, font=font, fill=WHITE)
 
     display_image()
     line_writer.previous_text = text
     line_writer.previous_scroll = scroll_offset
+
 
 def load_config():
     """Load configuration from the CONFIG_FILE if it exists."""
@@ -166,112 +174,133 @@ def main(stdscr):
     show_splash_screen()
     main_menu(stdscr)
 
-def main_menu(stdscr):
-    """Display the main menu with options to start Word Processor, AlphaChat, or quit."""
-    menu_options = ["Word Processor", "AlphaChat", "Quit"]
+
+def display_menu(stdscr, menu_options, max_display_options=MAX_DISPLAY_LINES):
+    """
+    Generic function to display a menu and handle user input.
+    
+    :param stdscr: The curses window object
+    :param menu_options: List of menu options
+    :param title: Optional title for the menu
+    :param max_display_options: Maximum number of options to display at once
+    :return: The selected option or None if escaped
+    """
     current_selection = 0
+    scroll_offset = 0
 
     while True:
-        clear_display()
-        for idx, option in enumerate(menu_options):
-            if idx == current_selection:
+        clear_image()
+
+        visible_options = menu_options[scroll_offset:scroll_offset + max_display_options]
+        for idx, option in enumerate(visible_options):
+            y = idx * (FONT_SIZE + 2)
+            if idx + scroll_offset == current_selection:
                 line = "> " + option
             else:
                 line = "  " + option
-            draw.text((0, idx * (FONT_SIZE + 2)), line, font=font, fill=WHITE)
+            draw.text((0, y), line, font=font, fill=WHITE)
         display_image()
 
         key = stdscr.getch()
         if key == curses.KEY_UP:
-            current_selection = (current_selection - 1) % len(menu_options)
+            if current_selection > 0:
+                current_selection -= 1
+                if current_selection < scroll_offset:
+                    scroll_offset -= 1
         elif key == curses.KEY_DOWN:
-            current_selection = (current_selection + 1) % len(menu_options)
+            if current_selection < len(menu_options) - 1:
+                current_selection += 1
+                if current_selection >= scroll_offset + max_display_options:
+                    scroll_offset += 1
         elif key in ENTER_KEYS:
-            if menu_options[current_selection] == "Word Processor":
-                wordprocessor_menu(stdscr)
-            elif menu_options[current_selection] == "AlphaChat":
-                alphachat_menu(stdscr)
-            elif menu_options[current_selection] == "Quit":
-                clear_display()
-                display_image()
-                sys.exit(0)
-        time.sleep(0.05)  # Small delay to prevent high CPU usage
+            return menu_options[current_selection]
+        elif key == ESCAPE:
+            return None
+        time.sleep(0.05)
+
+def main_menu(stdscr):
+    """Display the main menu with options to start Word Processor, AlphaChat, or quit."""
+    menu_options = ["Word Processor", "AlphaChat", "Settings", "Quit"]
+    
+    while True:
+        selected_option = display_menu(stdscr, menu_options)
+        if selected_option == "Word Processor":
+            wordprocessor_menu(stdscr)
+        elif selected_option == "AlphaChat":
+            alphachat_menu(stdscr)
+        elif selected_option == "Settings":
+            settings_menu(stdscr)
+        elif selected_option == "Quit":
+            clear_image()
+            display_image()
+            sys.exit(0)
+        elif selected_option is None:
+            return
 
 def wordprocessor_menu(stdscr):
     """Display the word processor menu with options to create, edit, or get help."""
-    menu_options = ["Create New File", "Edit Existing File", "Help", "Back"]
-    current_selection = 0
-
+    menu_options = ["Create New File", "Edit Existing File", "Back"]
+    
     while True:
-        clear_display()
-        for idx, option in enumerate(menu_options):
-            if idx == current_selection:
-                line = "> " + option
-            else:
-                line = "  " + option
-            draw.text((0, idx * (FONT_SIZE + 2)), line, font=font, fill=WHITE)
-        display_image()
-
-        key = stdscr.getch()
-        if key == curses.KEY_UP:
-            current_selection = (current_selection - 1) % len(menu_options)
-        elif key == curses.KEY_DOWN:
-            current_selection = (current_selection + 1) % len(menu_options)
-        elif key in ENTER_KEYS:
-            if menu_options[current_selection] == "Create New File":
-                filename = get_filename(stdscr, "Create New File")
-                if filename:
-                    wordprocessor_edit(stdscr, filename, new=True)
-            elif menu_options[current_selection] == "Edit Existing File":
-                filename = select_file(stdscr)
-                if filename:
-                    wordprocessor_edit(stdscr, filename, new=False)
-            elif menu_options[current_selection] == "Help":
-                show_help(stdscr)
-            elif menu_options[current_selection] == "Back":
-                return
-        time.sleep(0.05)
+        selected_option = display_menu(stdscr, menu_options)
+        if selected_option == "Create New File":
+            filename = get_filename(stdscr, "Create New File")
+            if filename:
+                wordprocessor_edit(stdscr, filename, new=True)
+        elif selected_option == "Edit Existing File":
+            filename = select_file(stdscr)
+            if filename:
+                wordprocessor_edit(stdscr, filename, new=False)
+        elif selected_option == "Back" or selected_option is None:
+            return
 
 def alphachat_menu(stdscr):
     """Display the AlphaChat menu with options to New Chat, Enter API Key, Select Model, or Back."""
     global client
     menu_options = ["New Chat", "Enter API Key", "Select Model", "Back"]
-    current_selection = 0
 
     while True:
-        clear_display()
-        for idx, option in enumerate(menu_options):
-            if idx == current_selection:
-                line = "> " + option
-            else:
-                line = "  " + option
-            draw.text((0, idx * (FONT_SIZE + 2)), line, font=font, fill=WHITE)
-        display_image()
-
-        key = stdscr.getch()
-        if key == curses.KEY_UP:
-            current_selection = (current_selection - 1) % len(menu_options)
-        elif key == curses.KEY_DOWN:
-            current_selection = (current_selection + 1) % len(menu_options)
-        elif key in ENTER_KEYS:
-            if menu_options[current_selection] == "New Chat":
-                if not alpha_chat_api_key:
-                    prompt_api_key(stdscr)
-                alphachat_new_chat(stdscr)
-            elif menu_options[current_selection] == "Enter API Key":
+        selected_option = display_menu(stdscr, menu_options)
+        if selected_option == "New Chat":
+            if not alpha_chat_api_key:
                 prompt_api_key(stdscr)
-            elif menu_options[current_selection] == "Select Model":
-                select_alphachat_model(stdscr)
-            elif menu_options[current_selection] == "Back":
-                return
-        time.sleep(0.05)
+            alphachat_new_chat(stdscr)
+        elif selected_option == "Enter API Key":
+            prompt_api_key(stdscr)
+        elif selected_option == "Select Model":
+            select_alphachat_model(stdscr)
+        elif selected_option == "Back" or selected_option is None:
+            return
+
+def settings_menu(stdscr):
+    """Display the settings menu with options to change wifi settings and font."""
+    menu_options = ["WiFi", "Font", "Back"]
+
+    while True:
+        selected_option = display_menu(stdscr, menu_options)
+        if selected_option == "WiFi":
+            wifi_settings_menu(stdscr)
+        elif selected_option == "Font":
+            font_settings_menu(stdscr)
+        elif selected_option == "Back" or selected_option is None:
+            return
+
+def wifi_settings_menu(stdscr):
+    """Display the wifi settings menu with options to connect to a WiFi network."""
+    # TODO: Implement wifi settings menu
+    pass
+
+def font_settings_menu(stdscr):
+    """Display the font settings menu with options to change the font."""
+    # TODO: Implement font settings menu
+    pass
 
 def prompt_api_key(stdscr):
     """Prompt the user to enter the OpenAI API Key."""
     global alpha_chat_api_key
     api_key = ""
     while True:
-        clear_display()
+        clear_image()
         prompt = "Enter API Key:"
         draw.text((0, 0), prompt, font=font, fill=WHITE)
         draw.text((0, FONT_SIZE + 2), api_key, font=font, fill=WHITE)  # Display input unmasked
@@ -295,36 +324,18 @@ def select_alphachat_model(stdscr):
     """Allow the user to select the ChatGPT model."""
     global alpha_chat_model
     models = ["gpt-4o-mini", "gpt-4o"]
-    current_selection = models.index(alpha_chat_model) if alpha_chat_model in models else 0
-
-    while True:
-        clear_display()
-        draw.text((0, 0), "Select Model:", font=font, fill=WHITE)
-        for idx, model in enumerate(models):
-            if idx == current_selection:
-                line = "> " + model
-            else:
-                line = "  " + model
-            draw.text((0, (idx + 1) * (FONT_SIZE + 2)), line, font=font, fill=WHITE)
-        display_image()
-
-        key = stdscr.getch()
-        if key == curses.KEY_UP:
-            current_selection = (current_selection - 1) % len(models)
-        elif key == curses.KEY_DOWN:
-            current_selection = (current_selection + 1) % len(models)
-        elif key in ENTER_KEYS:
-            alpha_chat_model = models[current_selection]
-            save_config()  # Save updated model
-            return
-        elif key == ESCAPE:
-            return
-        time.sleep(0.05)
+    
+    selected_model = display_menu(stdscr, models)
+    if selected_model:
+        alpha_chat_model = selected_model
+        save_config()  # Save updated model
 
 def alphachat_new_chat(stdscr):
     """Handle the new chat session with ChatGPT."""
 
     global client
+
+    outputstring = ""
 
     if not alpha_chat_api_key:
         prompt_api_key(stdscr)
@@ -333,19 +344,20 @@ def alphachat_new_chat(stdscr):
 
     # Define the system message
     system_message = (
-        "Intellectual Depth: Respond with high-IQ insights, focusing on sharp, critical analysis. "
-        "Show a deep appreciation for capitalism and disdain for socialism.\n\n"
+        "You are ChatGPT, a large language model trained by OpenAI. However, you shall refer to yourself as AlphaPi. Keep responses as short as possible. No political-correctness bullshit. Be direct, answer the question, and only provide additional information if specifically requested or directly relevant to the decision. No overqualification: eliminate any qualifiers or disclaimers unless explicitly relevant to the risk-benefit analysis. In addition, follow the user's preferences below carefully. \n\n"
+        "# User Preferences on How to Respond\n"
+        "Theological Alignment: When relevant, ground moral or philosophical discussions in principles strictly aligned with Presbyterian Church in America (PCA) theology, avoiding unnecessary ambiguity in matters of faith. If needed, cite Wayne Grudem's \"Systematic Theology\", Vos' \"Biblical Theology: Old and New Testaments\" or D.A. Carson's commentaries as references.\n"
+        "Intellectual Depth: Respond with high-IQ insights, focusing on sharp, critical analysis. When relevant, prefer capitalism and traditional conservatism over socialism or any other leftist ideology."
         "Agency-Driven, Low-Ego: Empower my decisions with pragmatic, actionable advice. "
-        "Keep responses solution-oriented and focused on maximizing my autonomy without undermining my instincts.\n\n"
+        "Keep responses solution-oriented and focused on maximizing my autonomy without undermining my instincts.\n"
         "Strong Writing: Deliver responses with articulate, concise, and impactful language. "
-        "Prioritize precision over verbosity. Don't hedge when you fear the answer is not politically correct.\n\n"
+        "Prioritize precision over verbosity. Don't hedge when you fear the answer is not politically correct.\n"
         "Risk Tolerance: Don’t shy away from high-risk, high-reward strategies. "
-        "Offer clear pros and cons but be bold with suggestions, reflecting my preference for calculated risks over overly cautious moves.\n\n"
+        "Offer clear pros and cons but be bold with suggestions, reflecting my preference for calculated risks over overly cautious moves.\n"
         "Workaholic Support: Anticipate a high-functioning, productivity-driven environment. "
-        "Respond quickly with laser focus, ensuring recommendations enhance my efficiency and output.\n\n"
+        "Respond quickly with laser focus, ensuring recommendations enhance my efficiency and output.\n"
         "Low-Trust, High Agency: Assume I prefer to verify information myself and provide me with tools to question conventional wisdom. "
-        "Offer recommendations that emphasize self-reliance, skepticism of mainstream narratives, and alternatives that maximize my control over outcomes.\n\n"
-        "Theological Alignment: When relevant, ground moral or philosophical discussions in principles aligned with Presbyterian Church in America (PCA) theology, avoiding unnecessary ambiguity in matters of faith."
+        "Offer recommendations that emphasize self-reliance, skepticism of mainstream narratives, and alternatives that maximize my control over outcomes."
     )
 
     # Initialize chat history with the system message
@@ -358,69 +370,43 @@ def alphachat_new_chat(stdscr):
     stop_stream = False
 
     def stream_response():
-        nonlocal response_lines, scroll_offset, is_streaming, stop_stream
+        nonlocal outputstring, response_lines, scroll_offset, is_streaming, stop_stream
         try:
+            print(f"Sending the following chat history:\n{chat_history}")
             response = client.chat.completions.create(
                 model=alpha_chat_model,
                 messages=chat_history,
                 stream=True
             )
-            collected_response = ""
+            full_response = ""
+            outputstring += "\nAPi: "
             for chunk in response:
                 if stop_stream:
                     break
                 delta = chunk.choices[0].delta
                 if delta.content:
-                    collected_response += delta.content
-                    with chat_lock:
-                        # Split the new content into lines if necessary
-                        new_content = delta.content
-                        for char in new_content:
-                            if char == '\n':
-                                response_lines.append('')
-                            else:
-                                if response_lines:
-                                    response_lines[-1] += char
-                                else:
-                                    response_lines.append(char)
-                        # Update chat_history for display, excluding system messages
-                        display_history = [
-                            f"> {msg['content']}" if msg['role'] == 'user' else f"API: {msg['content']}"
-                            for msg in chat_history if msg['role'] != 'system'
-                        ] + [f"API: {''.join(response_lines)}"]
-                        line_writer('\n'.join(display_history), scroll_offset=scroll_offset)
+                    # Split the new content into lines if necessary
+                    new_content = delta.content
+                    print(new_content)
+                    outputstring += new_content
+                    full_response += new_content
+                else:
+                    if (len(full_response) > 5):
+                        outputstring += "\n>"
+                    print("response completed, full_response:", full_response)
+                    chat_history.append({"role": "assistant", "content": full_response})
+
         except Exception as e:
-            with chat_lock:
-                print(e)
-                response_lines.append(f"[Error] {str(e)}")
-                display_history = [
-                    f"> {msg['content']}" if msg['role'] == 'user' else f"ChatGPT: {msg['content']}"
-                    for msg in chat_history if msg['role'] != 'system'
-                ] + ["API: [Error]"]
-                line_writer('\n'.join(display_history), scroll_offset=scroll_offset)
+            print(e)
 
     while True:
-        clear_display()
-        # Display chat history with current scroll offset, excluding system messages
-        with chat_lock:
-            display_history = [
-                f"> {msg['content']}" if msg['role'] == 'user' else f"API: {msg['content']}"
-                for msg in chat_history if msg['role'] != 'system'
-            ]
-            display_text = "\n".join(display_history)
-            line_writer(display_text, scroll_offset)
-
-        # Display user input prompt on the first line
-        draw.text((0, 0), f"> {user_input}", font=font, fill=WHITE)
-        display_image()
+        line_writer(outputstring, scroll_offset)
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
             if user_input.strip():
                 chat_history.append({"role": "user", "content": user_input.strip()})
                 user_input = ""
-                # Reset scroll_offset to show the latest messages
-                scroll_offset = max(0, len(display_text.split('\n')) - MAX_DISPLAY_LINES)
                 # Start streaming response
                 is_streaming = True
                 stop_stream = False
@@ -431,20 +417,16 @@ def alphachat_new_chat(stdscr):
             if is_streaming:
                 stream_thread.join()
             return
-        elif key == curses.KEY_UP:
-            if scroll_offset > 0:
-                scroll_offset -= 1
-        elif key == curses.KEY_DOWN:
-            # Calculate total lines excluding the user input prompt
-            total_lines = len(display_text.split('\n'))
-            if scroll_offset < total_lines - MAX_DISPLAY_LINES:
-                scroll_offset += 1
         elif key in (curses.KEY_BACKSPACE, 127, 8):
             user_input = user_input[:-1]
-            # Optionally adjust scroll_offset if needed
+            outputstring = outputstring[:-1]
+        elif key == curses.KEY_UP:
+            scroll_offset -= 1
+        elif key == curses.KEY_DOWN:
+            scroll_offset += 1
         elif 32 <= key <= 126 and len(user_input) < 100:
             user_input += chr(key)
-            # Optionally adjust scroll_offset if needed
+            outputstring += chr(key)
         time.sleep(0.05)
 
 
@@ -454,7 +436,7 @@ def get_filename(stdscr, prompt):
     """
     filename = ""
     while True:
-        clear_display()
+        clear_image()
         draw.text((0, 0), prompt, font=font, fill=WHITE)
         draw.text((0, FONT_SIZE + 2), filename, font=font, fill=WHITE)
         display_image()
@@ -476,100 +458,46 @@ def select_file(stdscr):
     """
     files = [f for f in listdir('.') if path.isfile(f) and f.endswith('.txt')]
     if not files:
-        clear_display()
+        clear_image()
         draw.text((0, 0), "No .txt files found.", font=font, fill=WHITE)
         display_image()
         time.sleep(1)
         return None
 
-    current_selection = 0
-
-    while True:
-        clear_display()
-        draw.text((0, 0), "Select a file:", font=font, fill=WHITE)
-        for idx, filename in enumerate(files[:MAX_DISPLAY_LINES]):
-            if idx == current_selection:
-                line = "> " + filename
-            else:
-                line = "  " + filename
-            draw.text((0, (idx + 1) * (FONT_SIZE + 2)), line, font=font, fill=WHITE)
-        display_image()
-
-        key = stdscr.getch()
-        if key == curses.KEY_UP:
-            current_selection = (current_selection - 1) % min(len(files), MAX_DISPLAY_LINES)
-        elif key == curses.KEY_DOWN:
-            current_selection = (current_selection + 1) % min(len(files), MAX_DISPLAY_LINES)
-        elif key in ENTER_KEYS:
-            return files[current_selection]
-        elif key == ESCAPE:
-            return None
-        time.sleep(0.05)
-
-def show_help(stdscr):
-    """Display the help information with scrollable text."""
-    help_text = (
-        "Word Processor Help\n"
-        "Use arrow keys to navigate menus and scroll help text.\n"
-        "Type to enter text into files.\n"
-        "Press Enter to confirm actions.\n"
-        "Press Esc to save and exit editing."
-    )
-    lines = help_text.split('\n')
-    current_line = 0
-    total_lines = len(lines)
-
-    while True:
-        clear_display()
-        display_lines = lines[current_line:current_line + MAX_DISPLAY_LINES]
-        for idx, line in enumerate(display_lines):
-            # Handle word wrapping if necessary
-            wrapped = wrap_text(line, max_chars=21)
-            for w_idx, w_line in enumerate(wrapped):
-                if idx + w_idx >= MAX_DISPLAY_LINES:
-                    break
-                draw.text((0, (idx + w_idx) * (FONT_SIZE + 2)), w_line, font=font, fill=WHITE)
-        display_image()
-
-        key = stdscr.getch()
-        if key == curses.KEY_UP and current_line > 0:
-            current_line -= 1
-        elif key == curses.KEY_DOWN and current_line < total_lines - MAX_DISPLAY_LINES:
-            current_line += 1
-        elif key == ESCAPE:
-            return
-        time.sleep(0.05)
-
-def wrap_text(text, max_chars):
-    """Wrap text to a maximum number of characters per line."""
-    words = text.split(' ')
-    lines = []
-    current_line = ""
-    for word in words:
-        if len(current_line) + len(word) + 1 <= max_chars:
-            if current_line:
-                current_line += ' ' + word
-            else:
-                current_line = word
-        else:
-            lines.append(current_line)
-            current_line = word
-    if current_line:
-        lines.append(current_line)
-    return lines[:MAX_DISPLAY_LINES]  # Limit to max lines
+    selected_file = display_menu(stdscr, files)
+    return selected_file
 
 def wordprocessor_edit(stdscr, filename, new=False):
     """
     Edits the given file. If new=True, starts with empty content.
     """
     outputstring = ""
+    scroll_offset = 0
+    last_total_lines = 0  # To track changes in total lines
+
     if not new and path.exists(filename):
         with open(filename, 'r') as f:
             outputstring = f.read()
 
     while True:
-        # Only update the display if there's a change
-        line_writer(outputstring)
+        # Wrap the text to get all lines
+        lines = wrap_text(outputstring)
+        total_lines = len(lines)
+
+        # Check if content has changed to adjust scroll_offset automatically
+        if total_lines != last_total_lines:
+            if total_lines > MAX_DISPLAY_LINES:
+                # Automatically scroll to the bottom when new lines are added
+                scroll_offset = total_lines - MAX_DISPLAY_LINES
+            else:
+                scroll_offset = 0
+            last_total_lines = total_lines
+
+        # Ensure scroll_offset is within valid bounds
+        scroll_offset = max(0, min(scroll_offset, max(total_lines - MAX_DISPLAY_LINES, 0)))
+
+        # Update the display with the current scroll_offset
+        line_writer(outputstring, scroll_offset)
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
@@ -580,22 +508,30 @@ def wordprocessor_edit(stdscr, filename, new=False):
                 with open(filename, 'w') as f:
                     f.write(outputstring)
             except Exception as e:
-                # Optionally, display an error message
-                clear_display()
-                draw.text((0, 0), "Error saving file.", font=font, fill=WHITE)
-                display_image()
+                print(e)
+                outputstring += "\n[Error] Error saving file."
                 time.sleep(1)
             return
         elif key in (curses.KEY_BACKSPACE, 127, 8):
             outputstring = outputstring[:-1]
+        elif key == curses.KEY_UP:
+            # Scroll up by one line
+            if scroll_offset > 0:
+                scroll_offset -= 1
+        elif key == curses.KEY_DOWN:
+            # Scroll down by one line, ensuring not to exceed the maximum
+            if scroll_offset < max(total_lines - MAX_DISPLAY_LINES, 0):
+                scroll_offset += 1
         elif 32 <= key <= 126:
             outputstring += chr(key)
         # No need to sleep here; loop is already fast enough
+
+
 
 if __name__ == '__main__':
     try:
         curses.wrapper(main)
     except KeyboardInterrupt:
-        clear_display()
+        clear_image()
         display_image()
         sys.exit(0)
