@@ -21,6 +21,7 @@ FONT_SIZE = 8
 MAX_FILENAME_LENGTH = 42  # Allow two lines of filename display
 MAX_DISPLAY_LINES = 3      # Number of lines visible on OLED
 CONFIG_FILE = 'alphachat_config.json'  # Configuration file path
+MAX_TEXT_LENGTH = 50000  # Set a maximum text length to prevent excessive processing
 
 # Initialize OLED display
 oled_reset = digitalio.DigitalInOut(board.D4)
@@ -60,9 +61,11 @@ def display_image():
     disp.image(image)
     disp.show()
 
+
 def clear_image():
     """Clear the OLED display."""
     draw.rectangle((0, 0, OLED_WIDTH, OLED_HEIGHT), outline=BLACK, fill=BLACK)
+
 
 def show_splash_screen():
     """Display a splash screen on the OLED."""
@@ -76,6 +79,7 @@ def show_splash_screen():
         # If splash image not found, just clear the display
         clear_image()
         display_image()
+
 
 def wrap_text(text, max_chars_per_line=21):
     """
@@ -97,33 +101,30 @@ def wrap_text(text, max_chars_per_line=21):
     return lines
 
 
-def line_writer(text, scroll_offset=0):
+def line_writer(lines, scroll_offset=0):
     """
-    Writes text to the OLED display, handling line wrapping and scrolling.
+    Writes pre-wrapped lines to the OLED display, handling scrolling.
     Only updates the display if the content has changed to prevent flickering.
     """
-    if not hasattr(line_writer, "previous_text"):
-        line_writer.previous_text = None
+    if not hasattr(line_writer, "previous_display_lines"):
+        line_writer.previous_display_lines = []
     if not hasattr(line_writer, "previous_scroll"):
         line_writer.previous_scroll = 0
 
-    if text == line_writer.previous_text and scroll_offset == line_writer.previous_scroll:
+    display_lines = lines[scroll_offset:scroll_offset + MAX_DISPLAY_LINES]
+
+    if (display_lines == line_writer.previous_display_lines and
+            scroll_offset == line_writer.previous_scroll):
         return  # No change, no need to update
 
     clear_image()
-
-    # Use the wrap_text function to get wrapped lines
-    lines = wrap_text(text)
-
-    # Apply scroll offset
-    display_lines = lines[scroll_offset:scroll_offset + MAX_DISPLAY_LINES]
 
     for idx, line in enumerate(display_lines):
         y = idx * (FONT_SIZE + 2)  # Adjust spacing as needed
         draw.text((0, y), line, font=font, fill=WHITE)
 
     display_image()
-    line_writer.previous_text = text
+    line_writer.previous_display_lines = display_lines.copy()
     line_writer.previous_scroll = scroll_offset
 
 
@@ -163,6 +164,7 @@ def save_config():
         # Optionally, handle errors (e.g., display a message)
         pass
 
+
 def main(stdscr):
     """Main function to initialize the application."""
     # Initialize curses
@@ -181,7 +183,6 @@ def display_menu(stdscr, menu_options, max_display_options=MAX_DISPLAY_LINES):
     
     :param stdscr: The curses window object
     :param menu_options: List of menu options
-    :param title: Optional title for the menu
     :param max_display_options: Maximum number of options to display at once
     :return: The selected option or None if escaped
     """
@@ -189,17 +190,18 @@ def display_menu(stdscr, menu_options, max_display_options=MAX_DISPLAY_LINES):
     scroll_offset = 0
 
     while True:
-        clear_image()
-
+        # Prepare display lines
         visible_options = menu_options[scroll_offset:scroll_offset + max_display_options]
+        display_lines = []
         for idx, option in enumerate(visible_options):
-            y = idx * (FONT_SIZE + 2)
             if idx + scroll_offset == current_selection:
                 line = "> " + option
             else:
                 line = "  " + option
-            draw.text((0, y), line, font=font, fill=WHITE)
-        display_image()
+            display_lines.append(line)
+
+        # Write lines to display
+        line_writer(display_lines, scroll_offset=0)
 
         key = stdscr.getch()
         if key == curses.KEY_UP:
@@ -217,6 +219,7 @@ def display_menu(stdscr, menu_options, max_display_options=MAX_DISPLAY_LINES):
         elif key == ESCAPE:
             return None
         time.sleep(0.05)
+
 
 def main_menu(stdscr):
     """Display the main menu with options to start Word Processor, AlphaChat, or quit."""
@@ -237,6 +240,7 @@ def main_menu(stdscr):
         elif selected_option is None:
             return
 
+
 def wordprocessor_menu(stdscr):
     """Display the word processor menu with options to create, edit, or get help."""
     menu_options = ["Create New File", "Edit Existing File", "Back"]
@@ -253,6 +257,7 @@ def wordprocessor_menu(stdscr):
                 wordprocessor_edit(stdscr, filename, new=False)
         elif selected_option == "Back" or selected_option is None:
             return
+
 
 def alphachat_menu(stdscr):
     """Display the AlphaChat menu with options to New Chat, Enter API Key, Select Model, or Back."""
@@ -272,6 +277,7 @@ def alphachat_menu(stdscr):
         elif selected_option == "Back" or selected_option is None:
             return
 
+
 def settings_menu(stdscr):
     """Display the settings menu with options to change wifi settings and font."""
     menu_options = ["WiFi", "Font", "Back"]
@@ -285,40 +291,45 @@ def settings_menu(stdscr):
         elif selected_option == "Back" or selected_option is None:
             return
 
+
 def wifi_settings_menu(stdscr):
     """Display the wifi settings menu with options to connect to a WiFi network."""
     # TODO: Implement wifi settings menu
     pass
+
 
 def font_settings_menu(stdscr):
     """Display the font settings menu with options to change the font."""
     # TODO: Implement font settings menu
     pass
 
+
 def prompt_api_key(stdscr):
     """Prompt the user to enter the OpenAI API Key."""
     global alpha_chat_api_key
-    api_key = ""
+    api_key = []
     while True:
         clear_image()
         prompt = "Enter API Key:"
         draw.text((0, 0), prompt, font=font, fill=WHITE)
-        draw.text((0, FONT_SIZE + 2), api_key, font=font, fill=WHITE)  # Display input unmasked
+        draw.text((0, FONT_SIZE + 2), ''.join(api_key), font=font, fill=WHITE)  # Display input unmasked
         display_image()
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
             if api_key:
-                alpha_chat_api_key = api_key
+                alpha_chat_api_key = ''.join(api_key)
                 client.api_key = alpha_chat_api_key
                 save_config()  # Save updated API key
                 return
         elif key == ESCAPE:
             return
         elif key in (curses.KEY_BACKSPACE, 127, 8):
-            api_key = api_key[:-1]
+            if api_key:
+                api_key.pop()
         elif 32 <= key <= 126 and len(api_key) < 128:
-            api_key += chr(key)
+            api_key.append(chr(key))
+
 
 def select_alphachat_model(stdscr):
     """Allow the user to select the ChatGPT model."""
@@ -330,12 +341,16 @@ def select_alphachat_model(stdscr):
         alpha_chat_model = selected_model
         save_config()  # Save updated model
 
+
 def alphachat_new_chat(stdscr):
     """Handle the new chat session with ChatGPT."""
 
     global client
 
-    outputstring = ""
+    output_lines = []  # List to store output lines
+    scroll_offset = 0
+    is_streaming = False
+    stop_stream = False
 
     if not alpha_chat_api_key:
         prompt_api_key(stdscr)
@@ -364,49 +379,50 @@ def alphachat_new_chat(stdscr):
     chat_history = [{"role": "system", "content": system_message}]
 
     user_input = ""
-    response_lines = []
+    response_buffer = []
     scroll_offset = 0
-    is_streaming = False
-    stop_stream = False
 
     def stream_response():
-        nonlocal outputstring, response_lines, scroll_offset, is_streaming, stop_stream
+        nonlocal response_buffer, scroll_offset, is_streaming, stop_stream
         try:
-            print(f"Sending the following chat history:\n{chat_history}")
             response = client.chat.completions.create(
                 model=alpha_chat_model,
                 messages=chat_history,
                 stream=True
             )
             full_response = ""
-            outputstring += "\nAPi: "
+            response_lines = []
             for chunk in response:
                 if stop_stream:
                     break
                 delta = chunk.choices[0].delta
                 if delta.content:
+                    full_response += delta.content
                     # Split the new content into lines if necessary
-                    new_content = delta.content
-                    print(new_content)
-                    outputstring += new_content
-                    full_response += new_content
-                else:
-                    if (len(full_response) > 5):
-                        outputstring += "\n>"
-                    print("response completed, full_response:", full_response)
-                    chat_history.append({"role": "assistant", "content": full_response})
-
+                    new_lines = wrap_text(delta.content)
+                    response_lines.extend(new_lines)
+                    response_buffer.extend(new_lines)
+                    # Update display incrementally
+                    line_writer(output_lines + response_buffer, scroll_offset)
+            # Append the full response to chat history
+            chat_history.append({"role": "assistant", "content": full_response})
         except Exception as e:
-            print(e)
+            response_buffer.append("[Error] " + str(e))
+            line_writer(output_lines + response_buffer, scroll_offset)
 
     while True:
-        line_writer(outputstring, scroll_offset)
+        # Combine existing output and new response lines
+        combined_output = output_lines + response_buffer
+        line_writer(combined_output, scroll_offset)
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
             if user_input.strip():
                 chat_history.append({"role": "user", "content": user_input.strip()})
+                output_lines.append("User: " + user_input.strip())
                 user_input = ""
+                response_buffer = []
+                scroll_offset = len(output_lines)  # Scroll to bottom
                 # Start streaming response
                 is_streaming = True
                 stop_stream = False
@@ -418,39 +434,43 @@ def alphachat_new_chat(stdscr):
                 stream_thread.join()
             return
         elif key in (curses.KEY_BACKSPACE, 127, 8):
-            user_input = user_input[:-1]
-            outputstring = outputstring[:-1]
+            if user_input:
+                user_input = user_input[:-1]
+                if response_buffer:
+                    response_buffer = response_buffer[:-1]
         elif key == curses.KEY_UP:
-            scroll_offset -= 1
+            scroll_offset = max(scroll_offset - 1, 0)
         elif key == curses.KEY_DOWN:
-            scroll_offset += 1
-        elif 32 <= key <= 126 and len(user_input) < 100:
+            scroll_offset = min(scroll_offset + 1, max(len(combined_output) - MAX_DISPLAY_LINES, 0))
+        elif 32 <= key <= 126 and len(user_input) < 100 and len(output_lines) + len(response_buffer) < MAX_TEXT_LENGTH:
             user_input += chr(key)
-            outputstring += chr(key)
-        time.sleep(0.05)
+            output_lines.append(chr(key))
+        time.sleep(0.01)  # Reduce sleep time for better responsiveness
 
 
 def get_filename(stdscr, prompt):
     """
     Prompts the user to enter a filename.
     """
-    filename = ""
+    filename = []
     while True:
         clear_image()
         draw.text((0, 0), prompt, font=font, fill=WHITE)
-        draw.text((0, FONT_SIZE + 2), filename, font=font, fill=WHITE)
+        draw.text((0, FONT_SIZE + 2), ''.join(filename), font=font, fill=WHITE)
         display_image()
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
             if filename:
-                return filename
+                return ''.join(filename)
         elif key == ESCAPE:
             return None
         elif key in (curses.KEY_BACKSPACE, 127, 8):
-            filename = filename[:-1]
+            if filename:
+                filename.pop()
         elif 32 <= key <= 126 and len(filename) < MAX_FILENAME_LENGTH:
-            filename += chr(key)
+            filename.append(chr(key))
+
 
 def select_file(stdscr):
     """
@@ -467,65 +487,63 @@ def select_file(stdscr):
     selected_file = display_menu(stdscr, files)
     return selected_file
 
+
 def wordprocessor_edit(stdscr, filename, new=False):
     """
     Edits the given file. If new=True, starts with empty content.
     """
-    outputstring = ""
+    output_lines = []  # List to store lines of text
     scroll_offset = 0
-    last_total_lines = 0  # To track changes in total lines
 
     if not new and path.exists(filename):
         with open(filename, 'r') as f:
-            outputstring = f.read()
+            file_content = f.read()
+            output_lines = wrap_text(file_content)
+
+    wrapped_lines = output_lines.copy()
 
     while True:
-        # Wrap the text to get all lines
-        lines = wrap_text(outputstring)
-        total_lines = len(lines)
-
-        # Check if content has changed to adjust scroll_offset automatically
-        if total_lines != last_total_lines:
-            if total_lines > MAX_DISPLAY_LINES:
-                # Automatically scroll to the bottom when new lines are added
-                scroll_offset = total_lines - MAX_DISPLAY_LINES
-            else:
-                scroll_offset = 0
-            last_total_lines = total_lines
-
         # Ensure scroll_offset is within valid bounds
-        scroll_offset = max(0, min(scroll_offset, max(total_lines - MAX_DISPLAY_LINES, 0)))
+        scroll_offset = max(0, min(scroll_offset, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)))
 
         # Update the display with the current scroll_offset
-        line_writer(outputstring, scroll_offset)
+        line_writer(wrapped_lines, scroll_offset)
 
         key = stdscr.getch()
         if key in ENTER_KEYS:
-            outputstring += '\n'
+            # Insert a newline by adding an empty string to output_lines
+            output_lines.append('')
+            wrapped_lines = wrap_text('\n'.join(output_lines))
+            scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
         elif key == ESCAPE:
             # Save the file before exiting
             try:
                 with open(filename, 'w') as f:
-                    f.write(outputstring)
+                    f.write('\n'.join(output_lines))
             except Exception as e:
-                print(e)
-                outputstring += "\n[Error] Error saving file."
+                output_lines.append("[Error] Error saving file.")
+                wrapped_lines = wrap_text('\n'.join(output_lines))
+                scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
                 time.sleep(1)
             return
         elif key in (curses.KEY_BACKSPACE, 127, 8):
-            outputstring = outputstring[:-1]
+            if output_lines:
+                if output_lines[-1]:
+                    output_lines[-1] = output_lines[-1][:-1]
+                else:
+                    output_lines.pop()
+                wrapped_lines = wrap_text('\n'.join(output_lines))
         elif key == curses.KEY_UP:
-            # Scroll up by one line
-            if scroll_offset > 0:
-                scroll_offset -= 1
+            scroll_offset = max(scroll_offset - 1, 0)
         elif key == curses.KEY_DOWN:
-            # Scroll down by one line, ensuring not to exceed the maximum
-            if scroll_offset < max(total_lines - MAX_DISPLAY_LINES, 0):
-                scroll_offset += 1
-        elif 32 <= key <= 126:
-            outputstring += chr(key)
+            scroll_offset = min(scroll_offset + 1, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0))
+        elif 32 <= key <= 126 and len('\n'.join(output_lines)) < MAX_TEXT_LENGTH:
+            if not output_lines:
+                output_lines.append('')
+            output_lines[-1] += chr(key)
+            wrapped_lines = wrap_text('\n'.join(output_lines))
+            scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
         # No need to sleep here; loop is already fast enough
-
 
 
 if __name__ == '__main__':
