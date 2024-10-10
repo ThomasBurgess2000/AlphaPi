@@ -21,7 +21,8 @@ FONT_SIZE = 8
 MAX_FILENAME_LENGTH = 42  # Allow two lines of filename display
 MAX_DISPLAY_LINES = 3      # Number of lines visible on OLED
 CONFIG_FILE = 'alphachat_config.json'  # Configuration file path
-MAX_TEXT_LENGTH = 50000  # Set a maximum text length to prevent excessive processing
+MAX_TEXT_LENGTH = 5000  # Set a maximum text length to prevent excessive processing
+BUFFER_INTERVAL = 0.2  # 200 milliseconds
 
 # Initialize OLED display
 oled_reset = digitalio.DigitalInOut(board.D4)
@@ -491,9 +492,12 @@ def select_file(stdscr):
 def wordprocessor_edit(stdscr, filename, new=False):
     """
     Edits the given file. If new=True, starts with empty content.
+    Implements keypress buffering to update the display at fixed intervals.
     """
     output_lines = []  # List to store lines of text
     scroll_offset = 0
+    last_update_time = time.time()
+    key_buffer = []  # Buffer to store keypresses
 
     if not new and path.exists(filename):
         with open(filename, 'r') as f:
@@ -503,47 +507,66 @@ def wordprocessor_edit(stdscr, filename, new=False):
     wrapped_lines = output_lines.copy()
 
     while True:
-        # Ensure scroll_offset is within valid bounds
-        scroll_offset = max(0, min(scroll_offset, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)))
+        current_time = time.time()
+        elapsed_time = current_time - last_update_time
 
-        # Update the display with the current scroll_offset
+        # Process buffer if interval has elapsed
+        if elapsed_time >= BUFFER_INTERVAL and key_buffer:
+            for key in key_buffer:
+                if key in ENTER_KEYS:
+                    # Insert a newline by adding an empty string to output_lines
+                    output_lines.append('')
+                elif key in (curses.KEY_BACKSPACE, 127, 8):
+                    if output_lines:
+                        if output_lines[-1]:
+                            output_lines[-1] = output_lines[-1][:-1]
+                        else:
+                            output_lines.pop()
+                elif 32 <= key <= 126 and len('\n'.join(output_lines)) < MAX_TEXT_LENGTH:
+                    if not output_lines:
+                        output_lines.append('')
+                    output_lines[-1] += chr(key)
+            key_buffer.clear()
+            # Re-wrap the text after processing buffered keys
+            wrapped_lines = wrap_text('\n'.join(output_lines))
+            # Adjust scroll_offset if necessary
+            scroll_offset = min(scroll_offset, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0))
+            last_update_time = current_time
+
+        # Update the display if needed
         line_writer(wrapped_lines, scroll_offset)
 
-        key = stdscr.getch()
-        if key in ENTER_KEYS:
-            # Insert a newline by adding an empty string to output_lines
-            output_lines.append('')
-            wrapped_lines = wrap_text('\n'.join(output_lines))
-            scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
-        elif key == ESCAPE:
-            # Save the file before exiting
-            try:
-                with open(filename, 'w') as f:
-                    f.write('\n'.join(output_lines))
-            except Exception as e:
-                output_lines.append("[Error] Error saving file.")
-                wrapped_lines = wrap_text('\n'.join(output_lines))
-                scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
-                time.sleep(1)
-            return
-        elif key in (curses.KEY_BACKSPACE, 127, 8):
-            if output_lines:
-                if output_lines[-1]:
-                    output_lines[-1] = output_lines[-1][:-1]
+        # Non-blocking input
+        try:
+            key = stdscr.getch()
+            if key != curses.ERR:
+                if key == ESCAPE:
+                    # Save the file before exiting
+                    try:
+                        with open(filename, 'w') as f:
+                            f.write('\n'.join(output_lines))
+                    except Exception as e:
+                        output_lines.append("[Error] Error saving file.")
+                        wrapped_lines = wrap_text('\n'.join(output_lines))
+                        scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
+                        time.sleep(1)
+                    return
                 else:
-                    output_lines.pop()
-                wrapped_lines = wrap_text('\n'.join(output_lines))
-        elif key == curses.KEY_UP:
-            scroll_offset = max(scroll_offset - 1, 0)
-        elif key == curses.KEY_DOWN:
-            scroll_offset = min(scroll_offset + 1, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0))
-        elif 32 <= key <= 126 and len('\n'.join(output_lines)) < MAX_TEXT_LENGTH:
-            if not output_lines:
-                output_lines.append('')
-            output_lines[-1] += chr(key)
-            wrapped_lines = wrap_text('\n'.join(output_lines))
-            scroll_offset = max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0)
-        # No need to sleep here; loop is already fast enough
+                    key_buffer.append(key)
+        except Exception:
+            pass  # Ignore any exceptions from getch()
+
+        # Handle scrolling keys immediately
+        if key_buffer:
+            last_key = key_buffer[-1]
+            if last_key == curses.KEY_UP:
+                scroll_offset = max(scroll_offset - 1, 0)
+                key_buffer.pop()  # Remove the scroll key from buffer
+            elif last_key == curses.KEY_DOWN:
+                scroll_offset = min(scroll_offset + 1, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0))
+                key_buffer.pop()  # Remove the scroll key from buffer
+
+        time.sleep(0.01)  # Sleep briefly to prevent high CPU usage
 
 
 if __name__ == '__main__':
