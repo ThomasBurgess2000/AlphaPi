@@ -382,9 +382,10 @@ def alphachat_new_chat(stdscr):
     user_input = ""
     response_buffer = []
     scroll_offset = 0
+    last_total_lines = 0  # To track previous total lines
 
     def stream_response():
-        nonlocal response_buffer, scroll_offset, is_streaming, stop_stream
+        nonlocal response_buffer, scroll_offset, is_streaming, stop_stream, last_total_lines
         try:
             response = client.chat.completions.create(
                 model=alpha_chat_model,
@@ -493,11 +494,13 @@ def wordprocessor_edit(stdscr, filename, new=False):
     """
     Edits the given file. If new=True, starts with empty content.
     Implements keypress buffering to update the display at fixed intervals.
+    Restores auto-scroll functionality.
     """
     output_lines = []  # List to store lines of text
     scroll_offset = 0
     last_update_time = time.time()
     key_buffer = []  # Buffer to store keypresses
+    last_total_lines = 0  # To track previous total lines
 
     if not new and path.exists(filename):
         with open(filename, 'r') as f:
@@ -512,6 +515,7 @@ def wordprocessor_edit(stdscr, filename, new=False):
 
         # Process buffer if interval has elapsed
         if elapsed_time >= BUFFER_INTERVAL and key_buffer:
+            # Process each key in the buffer
             for key in key_buffer:
                 if key in ENTER_KEYS:
                     # Insert a newline by adding an empty string to output_lines
@@ -529,8 +533,17 @@ def wordprocessor_edit(stdscr, filename, new=False):
             key_buffer.clear()
             # Re-wrap the text after processing buffered keys
             wrapped_lines = wrap_text('\n'.join(output_lines))
-            # Adjust scroll_offset if necessary
-            scroll_offset = min(scroll_offset, max(len(wrapped_lines) - MAX_DISPLAY_LINES, 0))
+            
+            # Check if new lines have been added
+            total_lines = len(wrapped_lines)
+            if total_lines != last_total_lines:
+                if total_lines > MAX_DISPLAY_LINES:
+                    # Automatically scroll to the bottom when new lines are added
+                    scroll_offset = total_lines - MAX_DISPLAY_LINES
+                else:
+                    scroll_offset = 0
+                last_total_lines = total_lines
+
             last_update_time = current_time
 
         # Update the display if needed
