@@ -15,13 +15,13 @@ import adafruit_ssd1305
 # Constants
 OLED_WIDTH = 128
 OLED_HEIGHT = 32
-SPLASH_IMAGE_PATH = 'piskel.png'
-FONT_PATH = 'Unibody8Pro-Regular.ttf'  # Ensure this font exists or use default
+SPLASH_IMAGE_PATH = '/home/ninjinka/piskel.png'
+FONT_PATH = '/home/ninjinka/Unibody8Pro-Regular.ttf'  # Ensure this font exists or use default
 FONT_SIZE = 8
 MAX_FILENAME_LENGTH = 42  # Allow two lines of filename display
 MAX_DISPLAY_LINES = 3      # Number of lines visible on OLED
-CONFIG_FILE = 'alphachat_config.json'  # Configuration file path
-MAX_TEXT_LENGTH = 5000  # Set a maximum text length to prevent excessive processing
+CONFIG_FILE = '/home/ninjinka/alphachat_config.json'  # Configuration file path
+MAX_TEXT_LENGTH = 50000  # Set a maximum text length to prevent excessive processing
 BUFFER_INTERVAL = 0.2  # 200 milliseconds
 
 # Initialize OLED display
