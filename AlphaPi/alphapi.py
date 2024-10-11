@@ -342,23 +342,27 @@ def select_alphachat_model(stdscr):
         alpha_chat_model = selected_model
         save_config()  # Save updated model
 
-
 def alphachat_new_chat(stdscr):
     """Handle the new chat session with ChatGPT."""
 
     global client
 
-    output_lines = []  # List to store output lines
+    output_lines = []  # List to store committed output lines (user and assistant messages)
+    response_buffer = []  # Buffer to store streaming assistant response
+    user_input = ""
     scroll_offset = 0
     is_streaming = False
     stop_stream = False
+    key_buffer = []
+    last_update_time = time.time()
+    last_total_lines = 0  # To track previous total lines
 
     if not alpha_chat_api_key:
         prompt_api_key(stdscr)
         if not alpha_chat_api_key:
             return  # API Key not set
 
-    # Define the system message
+    # Define the system message (same as before)
     system_message = (
         "You are ChatGPT, a large language model trained by OpenAI. However, you shall refer to yourself as AlphaPi. Keep responses as short as possible. No political-correctness bullshit. Be direct, answer the question, and only provide additional information if specifically requested or directly relevant to the decision. No overqualification: eliminate any qualifiers or disclaimers unless explicitly relevant to the risk-benefit analysis. In addition, follow the user's preferences below carefully. \n\n"
         "# User Preferences on How to Respond\n"
@@ -379,13 +383,8 @@ def alphachat_new_chat(stdscr):
     # Initialize chat history with the system message
     chat_history = [{"role": "system", "content": system_message}]
 
-    user_input = ""
-    response_buffer = []
-    scroll_offset = 0
-    last_total_lines = 0  # To track previous total lines
-
     def stream_response():
-        nonlocal response_buffer, scroll_offset, is_streaming, stop_stream, last_total_lines
+        nonlocal response_buffer, is_streaming, stop_stream
         try:
             response = client.chat.completions.create(
                 model=alpha_chat_model,
@@ -393,62 +392,84 @@ def alphachat_new_chat(stdscr):
                 stream=True
             )
             full_response = ""
-            response_lines = []
             for chunk in response:
                 if stop_stream:
                     break
                 delta = chunk.choices[0].delta
                 if delta.content:
                     full_response += delta.content
-                    # Split the new content into lines if necessary
-                    new_lines = wrap_text(delta.content)
-                    response_lines.extend(new_lines)
-                    response_buffer.extend(new_lines)
-                    # Update display incrementally
-                    line_writer(output_lines + response_buffer, scroll_offset)
-            # Append the full response to chat history
-            chat_history.append({"role": "assistant", "content": full_response})
+                    # Build the assistant's response so far
+                    response_text = f"APi: {full_response}"
+                    # Wrap the response_text
+                    wrapped_response = wrap_text(response_text)
+                    response_buffer = wrapped_response
         except Exception as e:
-            response_buffer.append("[Error] " + str(e))
-            line_writer(output_lines + response_buffer, scroll_offset)
+            response_buffer = wrap_text("[Error] " + str(e))
+        finally:
+            is_streaming = False
 
     while True:
-        # Combine existing output and new response lines
-        combined_output = output_lines + response_buffer
+        current_time = time.time()
+        elapsed_time = current_time - last_update_time
+
+        # Process buffered keys at intervals
+        if elapsed_time >= BUFFER_INTERVAL and key_buffer:
+            # Process each key in the buffer
+            for key in key_buffer:
+                if key in ENTER_KEYS:
+                    if user_input.strip() and not is_streaming:
+                        # Commit the user input to output_lines
+                        chat_history.append({"role": "user", "content": user_input.strip()})
+                        user_lines = wrap_text(f"> {user_input.strip()}")
+                        output_lines.extend(user_lines)
+                        user_input = ""
+                        response_buffer = []
+                        # Start streaming assistant's response
+                        is_streaming = True
+                        stop_stream = False
+                        stream_thread = threading.Thread(target=stream_response)
+                        stream_thread.start()
+                elif key in (curses.KEY_BACKSPACE, 127, 8):
+                    if user_input:
+                        user_input = user_input[:-1]
+                elif key == curses.KEY_UP:
+                    scroll_offset = max(scroll_offset - 1, 0)
+                elif key == curses.KEY_DOWN:
+                    max_scroll = max(len(combined_output) - MAX_DISPLAY_LINES, 0)
+                    scroll_offset = min(scroll_offset + 1, max_scroll)
+                elif 32 <= key <= 126 and len(user_input) < 100 and len(output_lines) + len(response_buffer) < MAX_TEXT_LENGTH:
+                    user_input += chr(key)
+            key_buffer.clear()
+            last_update_time = current_time
+
+        # Wrap user input
+        input_lines = wrap_text(f"> {user_input}")
+
+        # Combine existing output, response buffer, and current user input
+        combined_output = output_lines + response_buffer + input_lines
+
+        # Adjust scroll to ensure user's input is visible if it goes to next line
+        total_lines = len(combined_output)
+        if total_lines > MAX_DISPLAY_LINES:
+            user_input_lines = len(input_lines)
+            if total_lines - scroll_offset < MAX_DISPLAY_LINES + user_input_lines:
+                scroll_offset = total_lines - MAX_DISPLAY_LINES
+
+        # Write lines to display
         line_writer(combined_output, scroll_offset)
 
+        # Non-blocking input
         key = stdscr.getch()
-        if key in ENTER_KEYS:
-            if user_input.strip():
-                chat_history.append({"role": "user", "content": user_input.strip()})
-                output_lines.append("User: " + user_input.strip())
-                user_input = ""
-                response_buffer = []
-                scroll_offset = len(output_lines)  # Scroll to bottom
-                # Start streaming response
-                is_streaming = True
-                stop_stream = False
-                stream_thread = threading.Thread(target=stream_response)
-                stream_thread.start()
-        elif key == ESCAPE:
-            stop_stream = True
-            if is_streaming:
-                stream_thread.join()
-            return
-        elif key in (curses.KEY_BACKSPACE, 127, 8):
-            if user_input:
-                user_input = user_input[:-1]
-                if response_buffer:
-                    response_buffer = response_buffer[:-1]
-        elif key == curses.KEY_UP:
-            scroll_offset = max(scroll_offset - 1, 0)
-        elif key == curses.KEY_DOWN:
-            scroll_offset = min(scroll_offset + 1, max(len(combined_output) - MAX_DISPLAY_LINES, 0))
-        elif 32 <= key <= 126 and len(user_input) < 100 and len(output_lines) + len(response_buffer) < MAX_TEXT_LENGTH:
-            user_input += chr(key)
-            output_lines.append(chr(key))
-        time.sleep(0.01)  # Reduce sleep time for better responsiveness
+        if key != curses.ERR:
+            if key == ESCAPE:
+                if is_streaming:
+                    stop_stream = True
+                    stream_thread.join()
+                return
+            else:
+                key_buffer.append(key)
 
+        time.sleep(0.01)  # Sleep briefly to prevent high CPU usage
 
 def get_filename(stdscr, prompt):
     """
