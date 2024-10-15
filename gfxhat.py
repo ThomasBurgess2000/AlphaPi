@@ -6,13 +6,14 @@ from openai import OpenAI
 import threading
 import json
 import os
+import signal
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 library_dir = os.path.join(current_dir, '..', 'library')
 
 # Add 'library' to the Python path
 sys.path.append(os.path.abspath(library_dir))
-from gfxhat import lcd, backlight, fonts
+from gfxhat import lcd, backlight, fonts, touch
 from PIL import Image, ImageFont, ImageDraw
 
 # Constants
@@ -26,6 +27,7 @@ MAX_DISPLAY_LINES = 5      # Number of lines visible on GFX HAT (adjusted for 12
 CONFIG_FILE = '/home/ninjinka/alphachat_config.json'  # Configuration file path
 MAX_TEXT_LENGTH = 50000  # Set a maximum text length to prevent excessive processing
 BUFFER_INTERVAL = 0.2  # 200 milliseconds
+shutdown_flag = threading.Event()
 
 # Initialize GFX HAT display
 lcd.clear()
@@ -125,7 +127,7 @@ def line_writer(lines, scroll_offset=0):
     clear_image()
 
     for idx, line in enumerate(display_lines):
-        y = idx * (FONT_SIZE + 2)  # Adjust spacing as needed
+        y = idx * (FONT_SIZE - 0.7)  # Adjust spacing as needed
         draw.text((0, y), line, font=font, fill=WHITE)
 
     update_display(image)
@@ -177,10 +179,51 @@ def main(stdscr):
     stdscr.nodelay(True)        # Non-blocking input
     stdscr.keypad(True)
 
+    # Start touch event handling in a separate thread
+    touch_thread = threading.Thread(target=touch_event_thread, daemon=True)
+    touch_thread.start()
+
     load_config()  # Load existing configuration
     show_splash_screen()
     main_menu(stdscr)
 
+def touch_event_thread():
+    """Thread to handle touch events and update LEDs accordingly."""
+    backlight_on = False
+    brightness = 127.5
+    def handler(ch, event):
+        nonlocal backlight_on, brightness
+        if event == 'press':
+            if ch == 4:
+                backlight_on = not backlight_on
+                touch.set_led(4, backlight_on and 1 or 0)
+            elif ch == 5:
+                brightness = min(brightness + 25.5, 255)
+            elif ch == 3:
+                brightness = max(brightness - 25.5, 0)
+            if backlight_on:
+                backlight.set_all(int(brightness), int(brightness), int(brightness))
+            else:
+                backlight.set_all(0, 0, 0)
+            backlight.show()
+
+    # Initialize LEDs and set handlers
+    for x in range(6):
+        touch.set_led(x, 1)
+        time.sleep(0.1)
+        touch.set_led(x, 0)
+
+    # Only use the bottom 3 buttons
+    for x in range(3, 7):
+        touch.on(x, handler)
+
+    backlight.set_all(int(brightness), int(brightness), int(brightness))
+    backlight.show()
+
+    # Keep the thread alive until shutdown
+    while not shutdown_flag.is_set():
+        signal.pause()  # Wait for signals (e.g., touch events)
+        time.sleep(0.1)  # Small sleep to prevent tight loop
 
 def display_menu(stdscr, menu_options, max_display_options=MAX_DISPLAY_LINES):
     """
@@ -317,7 +360,7 @@ def prompt_api_key(stdscr):
         clear_image()
         prompt = "Enter API Key:"
         draw.text((0, 0), prompt, font=font, fill=WHITE)
-        draw.text((0, FONT_SIZE + 2), ''.join(api_key), font=font, fill=WHITE)  # Display input unmasked
+        draw.text((0, FONT_SIZE - 0.7), ''.join(api_key), font=font, fill=WHITE)  # Display input unmasked
         update_display(image)
 
         key = stdscr.getch()
@@ -485,7 +528,7 @@ def get_filename(stdscr, prompt):
     while True:
         clear_image()
         draw.text((0, 0), prompt, font=font, fill=WHITE)
-        draw.text((0, FONT_SIZE + 2), ''.join(filename), font=font, fill=WHITE)
+        draw.text((0, FONT_SIZE - 0.7), ''.join(filename), font=font, fill=WHITE)
         update_display(image)
 
         key = stdscr.getch()
@@ -615,4 +658,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         clear_image()
         update_display(image)
+        backlight.set_all(0, 0, 0)
+        backlight.show()
+        touch.set_led(4, 0)
         sys.exit(0)
