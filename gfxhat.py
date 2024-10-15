@@ -5,7 +5,13 @@ from os import listdir, path
 from openai import OpenAI
 import threading
 import json
+import os
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+library_dir = os.path.join(current_dir, '..', 'library')
+
+# Add 'library' to the Python path
+sys.path.append(os.path.abspath(library_dir))
 from gfxhat import lcd, backlight, fonts
 from PIL import Image, ImageFont, ImageDraw
 
@@ -16,7 +22,7 @@ SPLASH_IMAGE_PATH = '/home/ninjinka/piskel.png'
 FONT_PATH = fonts.Bitocra13Full  # Using Bitocra13Full font from gfxhat
 FONT_SIZE = 13
 MAX_FILENAME_LENGTH = 42  # Allow two lines of filename display
-MAX_DISPLAY_LINES = 4      # Number of lines visible on GFX HAT (adjusted for 128x64 and font size)
+MAX_DISPLAY_LINES = 5      # Number of lines visible on GFX HAT (adjusted for 128x64 and font size)
 CONFIG_FILE = '/home/ninjinka/alphachat_config.json'  # Configuration file path
 MAX_TEXT_LENGTH = 50000  # Set a maximum text length to prevent excessive processing
 BUFFER_INTERVAL = 0.2  # 200 milliseconds
@@ -55,10 +61,8 @@ client = None
 
 def update_display(image):
     """Update the GFX HAT display with the current image buffer."""
-    for x in range(DISPLAY_WIDTH):
-        for y in range(DISPLAY_HEIGHT):
-            pixel = image.getpixel((x, y))
-            lcd.set_pixel(x, y, pixel)
+    lcd.clear()
+    lcd.set_image(image)
     lcd.show()
 
 
