@@ -1,16 +1,11 @@
 # AlphaPi
 
-These are Python scripts that are meant to be used with the Adafruit 2.23" Monochrome OLED Bonnet (https://learn.adafruit.com/adafruit-2-23-monochrome-oled-bonnet/overview) although scripts with "sharp" in the name are meant to work with the 400x240 Sharp Memory Display from Adafruit.
+AlphaPi is a plain text device that has two apps: word processor and chatbot.
 
-## alphapi.py
-alphapi.py is a basic text-entry script built using the curses module. Updates the screen with characters typed. Inspired by the Alphasmart.
+See it in action here: https://www.reddit.com/r/AlphaPi/comments/1g417sg/alphapi_v2/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
-### game.py
-game.py allows you to use pygame functions and event handling without using its display functions (you continue to use PIL for that). The main point is to be able to use pygame for key presses. Still requires an HDMI display to be plugged in.
+`128x32oled.py` is meant to be used with the Adafruit 2.23" Monochrome OLED Bonnet (https://learn.adafruit.com/adafruit-2-23-monochrome-oled-bonnet/overview).
 
-### gamewodis.py
-gamewodis.py is my attempt to get pygame input without a display plugged in (headless) but so far have been unsuccessful.
+`gfxhat.py` is meant to be used with the GFX HAT (https://www.pishop.us/product/gfx-hat-128x64-lcd-display-with-rgb-backlight-and-touch-buttons/).
 
-### photo.py 
-photo.py displays an image that you add to the same directory as the script.
-
+The case I use is `alphapi.stl`. Will modify in the future for other configurations.
